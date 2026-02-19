@@ -1,147 +1,277 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PadiBuddy</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(135deg, #1e1b4b, #312e81);
-      color: white;
-      text-align: center;
-    }
+<title>PadiBuddy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .container {
-      padding: 40px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f172a;
+  color: white;
+}
 
-    .card {
-      background: rgba(255,255,255,0.1);
-      padding: 25px;
-      border-radius: 12px;
-      width: 320px;
-      margin: 40px auto;
-    }
+.hidden { display: none; }
 
-    input {
-      padding: 10px;
-      width: 90%;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: none;
-    }
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  width: 220px;
+  height: 100vh;
+  background: #1e293b;
+  padding: 20px;
+}
 
-    button {
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      background: #6366f1;
-      color: white;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+.sidebar h2 {
+  margin-bottom: 30px;
+}
 
-    button:hover {
-      background: #8b5cf6;
-    }
+.sidebar button {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  background: #334155;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
 
-    .hidden {
-      display: none;
-    }
-  </style>
+.sidebar button:hover {
+  background: #6366f1;
+}
+
+/* MAIN CONTENT */
+.main {
+  margin-left: 240px;
+  padding: 40px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 8px;
+  width: 80%;
+  margin: 8px 0;
+}
+
+button.primary {
+  background: #6366f1;
+  border: none;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.progress-bar {
+  background: #1e293b;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 20px;
+  margin-top: 10px;
+}
+
+.progress-fill {
+  background: #6366f1;
+  height: 100%;
+  width: 0%;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+}
+</style>
 </head>
+
 <body>
 
-<div class="container">
+<!-- LANDING -->
+<div id="landing" class="main">
+  <h1>Welcome to PadiBuddy</h1>
+  <p>Your AI-powered study planner to track goals, boost productivity and improve learning.</p>
+  <button class="primary" onclick="showAuth()">Start Planning</button>
+</div>
 
-  <!-- REGISTER -->
-  <div id="registerCard" class="card">
+<!-- AUTH -->
+<div id="auth" class="main hidden">
+  <div class="card">
     <h2>Register</h2>
-    <input type="text" id="regUser" placeholder="Username">
-    <input type="password" id="regPass" placeholder="Password">
-    <button onclick="register()">Register</button>
-    <p>Already have account? <a href="#" onclick="showLogin()">Login</a></p>
+    <input type="text" id="regUser" placeholder="Username"><br>
+    <input type="password" id="regPass" placeholder="Password"><br>
+    <button class="primary" onclick="register()">Register</button>
   </div>
 
-  <!-- LOGIN -->
-  <div id="loginCard" class="card hidden">
+  <div class="card">
     <h2>Login</h2>
-    <input type="text" id="loginUser" placeholder="Username">
-    <input type="password" id="loginPass" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p>No account? <a href="#" onclick="showRegister()">Register</a></p>
+    <input type="text" id="loginUser" placeholder="Username"><br>
+    <input type="password" id="loginPass" placeholder="Password"><br>
+    <button class="primary" onclick="login()">Login</button>
   </div>
+</div>
 
-  <!-- PORTAL -->
-  <div id="portalCard" class="card hidden">
-    <h2>Welcome to PadiBuddy</h2>
-    <p id="welcomeText"></p>
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <div class="sidebar">
+    <h2>PadiBuddy</h2>
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('planner')">Planner</button>
+    <button onclick="showSection('ai')">AI Assistant</button>
+    <button onclick="showSection('profile')">Profile</button>
     <button onclick="logout()">Logout</button>
   </div>
 
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="section">
+      <h1 id="welcomeText"></h1>
+
+      <div class="card">
+        <h3>Study Streak 🔥</h3>
+        <p id="streakCount">0 days</p>
+      </div>
+
+      <div class="card">
+        <h3>Progress</h3>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNER -->
+    <div id="planner" class="section hidden">
+      <h2>Study Planner</h2>
+      <input type="text" id="taskInput" placeholder="Enter task">
+      <button class="primary" onclick="addTask()">Add</button>
+      <ul id="taskList"></ul>
+    </div>
+
+    <!-- AI -->
+    <div id="ai" class="section hidden">
+      <h2>AI Assistant</h2>
+      <input type="text" id="aiInput" placeholder="Ask about exam or productivity">
+      <button class="primary" onclick="aiReply()">Ask</button>
+      <div id="aiOutput"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="profile" class="section hidden">
+      <h2>Profile</h2>
+      <p>Username: <span id="profileName"></span></p>
+    </div>
+
+  </div>
 </div>
 
 <script>
-function showLogin() {
-  document.getElementById("registerCard").classList.add("hidden");
-  document.getElementById("loginCard").classList.remove("hidden");
+
+/* AUTH */
+function showAuth(){
+  landing.classList.add("hidden");
+  auth.classList.remove("hidden");
 }
 
-function showRegister() {
-  document.getElementById("loginCard").classList.add("hidden");
-  document.getElementById("registerCard").classList.remove("hidden");
+function register(){
+  localStorage.setItem("username", regUser.value);
+  localStorage.setItem("password", regPass.value);
+  alert("Registered!");
 }
 
-function register() {
-  let user = document.getElementById("regUser").value;
-  let pass = document.getElementById("regPass").value;
-
-  if(user === "" || pass === "") {
-    alert("Please fill all fields");
-    return;
-  }
-
-  localStorage.setItem("username", user);
-  localStorage.setItem("password", pass);
-
-  alert("Registered Successfully!");
-  showLogin();
-}
-
-function login() {
-  let user = document.getElementById("loginUser").value;
-  let pass = document.getElementById("loginPass").value;
-
-  let savedUser = localStorage.getItem("username");
-  let savedPass = localStorage.getItem("password");
-
-  if(user === savedUser && pass === savedPass) {
-    localStorage.setItem("loggedIn", "true");
-    openPortal();
+function login(){
+  if(loginUser.value === localStorage.getItem("username") &&
+     loginPass.value === localStorage.getItem("password")){
+      localStorage.setItem("loggedIn","true");
+      openApp();
   } else {
     alert("Invalid credentials");
   }
 }
 
-function openPortal() {
-  document.getElementById("loginCard").classList.add("hidden");
-  document.getElementById("registerCard").classList.add("hidden");
-  document.getElementById("portalCard").classList.remove("hidden");
-
-  let user = localStorage.getItem("username");
-  document.getElementById("welcomeText").innerText = "Hello, " + user + " 👋";
+function openApp(){
+  auth.classList.add("hidden");
+  landing.classList.add("hidden");
+  app.classList.remove("hidden");
+  welcomeText.innerText = "Hello, " + localStorage.getItem("username");
+  profileName.innerText = localStorage.getItem("username");
+  updateProgress();
 }
 
-function logout() {
+function logout(){
   localStorage.removeItem("loggedIn");
   location.reload();
 }
 
-window.onload = function() {
-  if(localStorage.getItem("loggedIn") === "true") {
-    openPortal();
+window.onload = function(){
+  if(localStorage.getItem("loggedIn")==="true"){
+    openApp();
   }
-};
+}
+
+/* NAVIGATION */
+function showSection(section){
+  document.querySelectorAll(".section").forEach(s=>s.classList.add("hidden"));
+  document.getElementById(section).classList.remove("hidden");
+}
+
+/* PLANNER */
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function addTask(){
+  let task = taskInput.value;
+  tasks.push({name:task, done:false});
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  taskInput.value="";
+  renderTasks();
+}
+
+function renderTasks(){
+  taskList.innerHTML="";
+  tasks.forEach((t,i)=>{
+    let li=document.createElement("li");
+    li.innerHTML = `<input type="checkbox" onchange="toggleTask(${i})"> ${t.name}`;
+    taskList.appendChild(li);
+  });
+}
+renderTasks();
+
+function toggleTask(i){
+  tasks[i].done = !tasks[i].done;
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  updateProgress();
+}
+
+/* PROGRESS */
+function updateProgress(){
+  let completed = tasks.filter(t=>t.done).length;
+  let percent = tasks.length ? Math.round((completed/tasks.length)*100) : 0;
+  progressFill.style.width = percent+"%";
+  progressFill.innerText = percent+"%";
+}
+
+/* STREAK */
+let streak = localStorage.getItem("streak") || 1;
+streakCount.innerText = streak + " days";
+
+/* AI */
+function aiReply(){
+  let q = aiInput.value.toLowerCase();
+  let r = "Stay consistent and revise daily.";
+
+  if(q.includes("exam")) r="Create 7-day revision plan and practice mock tests.";
+  if(q.includes("productivity")) r="Use Pomodoro technique: 25 mins focus, 5 mins break.";
+  if(q.includes("weak")) r="Focus extra 30 mins daily on weak subject.";
+
+  aiOutput.innerHTML = "<p><b>AI:</b> "+r+"</p>";
+}
+
 </script>
 
 </body>
