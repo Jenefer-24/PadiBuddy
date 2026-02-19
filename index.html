@@ -3,12 +3,97 @@
 <head>
 <title>PadiBuddy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(135deg,#4e73df,#764ba2);
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+color:white;
+}
+
+.screen{
+display:none;
+background:rgba(0,0,0,0.4);
+padding:30px;
+border-radius:15px;
+width:100%;
+max-width:500px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+text-align:center;
+position:relative;
+}
+
+.active{display:block;}
+
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:none;
+border-radius:8px;
+}
+
+button{
+padding:10px 18px;
+border:none;
+border-radius:8px;
+background:white;
+color:#764ba2;
+font-weight:bold;
+cursor:pointer;
+margin-top:6px;
+}
+
+.menu-btn{
+position:absolute;
+top:10px;
+left:15px;
+font-size:24px;
+cursor:pointer;
+}
+
+.side-menu{
+display:none;
+position:absolute;
+top:0;
+left:0;
+width:200px;
+height:100%;
+background:#222;
+padding:20px;
+}
+
+.side-menu.active{display:block;}
+
+.side-menu button{
+width:100%;
+background:#333;
+color:white;
+margin:5px 0;
+}
+
+#avatar{
+width:100px;
+height:100px;
+border-radius:50%;
+margin:15px auto;
+animation:float 3s infinite alternate;
+}
+
+@keyframes float{
+0%{transform:translateY(0);}
+100%{transform:translateY(10px);}
+}
+</style>
 </head>
 
 <body>
 
-<!-- REGISTER -->
 <div class="screen active" id="register">
 <h2>Register</h2>
 <input id="username" placeholder="Username">
@@ -28,82 +113,177 @@
 <option>Special Course</option>
 </select>
 
-<button onclick="register()">Register</button>
-<p>Already have account? <button onclick="switchScreen('login')">Login</button></p>
+<button onclick="registerUser()">Register</button>
+<p>Already have account? <button onclick="showScreen('login')">Login</button></p>
 </div>
 
-<!-- LOGIN -->
 <div class="screen" id="login">
 <h2>Login</h2>
 <input id="loginUser" placeholder="Username">
 <input id="loginPass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<p>No account? <button onclick="switchScreen('register')">Register</button></p>
+<button onclick="loginUser()">Login</button>
+<p>No account? <button onclick="showScreen('register')">Register</button></p>
 </div>
 
-<!-- DASHBOARD -->
 <div class="screen" id="dashboard">
-
 <div class="menu-btn" onclick="toggleMenu()">⋮</div>
 
-<div class="side-menu" id="sideMenu">
+<div class="side-menu" id="menu">
 <button onclick="toggleMenu()">Close</button>
 <button onclick="openProfile()">Profile</button>
-<button onclick="switchScreen('myDates'); toggleMenu();">My Dates</button>
 <button onclick="logout()">Logout</button>
 </div>
 
-<h2 id="welcomeText"></h2>
-<p class="quote" id="quote"></p>
+<h2 id="welcome"></h2>
+<p id="quote"></p>
 
-<input id="taskInput" placeholder="Enter study task">
-<button onclick="addTask()">Add Task</button>
-
+<input id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add</button>
 <ul id="taskList"></ul>
 
-<div class="progress-container">
-<div class="progress-bar" id="progressBar"></div>
+<h3>🔥 Streak</h3>
+<p id="streak"></p>
+<button onclick="updateStreak()">Mark Today Studied</button>
 </div>
 
-<h3>🔥 Study Streak</h3>
-<p id="streakText"></p>
-<button onclick="markStudied()">Mark Today Studied</button>
-
-</div>
-
-<!-- PROFILE -->
-<div class="screen" id="profileScreen">
+<div class="screen" id="profile">
 <h2>Your Profile</h2>
 <div id="avatar"></div>
-<p id="profileDetails"></p>
-<button onclick="switchScreen('dashboard')">Back</button>
+<p id="profileInfo"></p>
+<button onclick="showScreen('dashboard')">Back</button>
 </div>
 
-<!-- MY DATES -->
-<div class="screen" id="myDates">
-<h2>My Academic Records</h2>
+<script>
+function showScreen(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
 
-<h3>📊 Enter Test Result</h3>
-<input id="resultSubject" placeholder="Subject">
-<input id="resultType" placeholder="Test Type (Unit Test / Midterm)">
-<input id="resultMarks" type="number" placeholder="Marks">
-<button onclick="saveResult()">Save Result</button>
+function registerUser(){
+let username=document.getElementById("username").value;
+let password=document.getElementById("password").value;
+let age=document.getElementById("age").value;
+let gender=document.getElementById("gender").value;
+let study=document.getElementById("study").value;
 
-<ul id="resultList"></ul>
+if(!username||!password||!age||!gender||!study){
+alert("Fill all fields");
+return;
+}
 
-<hr style="margin:20px 0;">
+localStorage.setItem("profile",JSON.stringify({
+username,password,age,gender,study
+}));
 
-<h3>📅 Upcoming Exam Schedule</h3>
-<input id="examSubject" placeholder="Subject">
-<input id="examDate" type="date">
-<button onclick="saveExam()">Add Exam Date</button>
+alert("Registered Successfully!");
+showScreen("login");
+}
 
-<ul id="examList"></ul>
+function loginUser(){
+let u=document.getElementById("loginUser").value;
+let p=document.getElementById("loginPass").value;
+let profile=JSON.parse(localStorage.getItem("profile"));
 
-<br>
-<button onclick="switchScreen('dashboard')">Back</button>
-</div>
+if(profile && u===profile.username && p===profile.password){
+localStorage.setItem("logged","yes");
+loadDashboard();
+}else{
+alert("Invalid credentials");
+}
+}
 
-<script src="script.js"></script>
+function loadDashboard(){
+showScreen("dashboard");
+let profile=JSON.parse(localStorage.getItem("profile"));
+document.getElementById("welcome").innerText="Welcome "+profile.username;
+
+let quotes=[
+"Stay consistent.",
+"You are improving daily.",
+"Discipline wins.",
+"Keep pushing forward."
+];
+document.getElementById("quote").innerText=
+quotes[Math.floor(Math.random()*quotes.length)];
+
+loadTasks();
+loadStreak();
+}
+
+function logout(){
+localStorage.removeItem("logged");
+location.reload();
+}
+
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("active");
+}
+
+function addTask(){
+let task=document.getElementById("taskInput").value;
+if(!task)return;
+
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+tasks.push(task);
+localStorage.setItem("tasks",JSON.stringify(tasks));
+document.getElementById("taskInput").value="";
+loadTasks();
+}
+
+function loadTasks(){
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+let list=document.getElementById("taskList");
+list.innerHTML="";
+tasks.forEach(t=>{
+let li=document.createElement("li");
+li.innerText=t;
+list.appendChild(li);
+});
+}
+
+function loadStreak(){
+let streak=localStorage.getItem("streak")||0;
+document.getElementById("streak").innerText=streak+" days";
+}
+
+function updateStreak(){
+let today=new Date().toDateString();
+let last=localStorage.getItem("lastDate");
+
+if(last===today){
+alert("Already updated today!");
+return;
+}
+
+let streak=parseInt(localStorage.getItem("streak"))||0;
+streak++;
+localStorage.setItem("streak",streak);
+localStorage.setItem("lastDate",today);
+loadStreak();
+}
+
+function openProfile(){
+toggleMenu();
+showScreen("profile");
+
+let profile=JSON.parse(localStorage.getItem("profile"));
+document.getElementById("profileInfo").innerHTML=
+"Username: "+profile.username+"<br>"+
+"Age: "+profile.age+"<br>"+
+"Gender: "+profile.gender+"<br>"+
+"Study: "+profile.study;
+
+let avatar=document.getElementById("avatar");
+avatar.style.background=
+profile.gender==="Male"
+? "linear-gradient(135deg,#4e73df,#00c6ff)"
+: "linear-gradient(135deg,#ff6ec4,#7873f5)";
+}
+
+if(localStorage.getItem("logged")==="yes"){
+loadDashboard();
+}
+</script>
+
 </body>
 </html>
