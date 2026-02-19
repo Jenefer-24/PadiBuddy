@@ -23,6 +23,7 @@
 <option>Special Course</option>
 </select>
 <button onclick="register()">Register</button>
+<p>Already registered? <button onclick="switchScreen('login')">Login</button></p>
 </div>
 
 <!-- LOGIN -->
@@ -30,6 +31,7 @@
 <h2>Login</h2>
 <input id="loginUser" placeholder="Username">
 <button onclick="login()">Login</button>
+<p>No account? <button onclick="switchScreen('register')">Register</button></p>
 </div>
 
 <!-- DASHBOARD -->
@@ -40,19 +42,14 @@
 <div class="side-menu" id="sideMenu">
 <button onclick="toggleMenu()">Close</button>
 <button onclick="alert(JSON.stringify(JSON.parse(localStorage.getItem('profile')),null,2))">Profile</button>
-<button onclick="alert('AI Assistant coming soon')">AI Assistant</button>
-<button onclick="alert('Calendar coming soon')">Calendar</button>
-<button onclick="alert('Notifications coming soon')">Notifications</button>
 <button onclick="logout()">Logout</button>
 </div>
 
 <h2 id="welcomeText"></h2>
+<p class="quote" id="quote"></p>
 
 <input id="taskInput" placeholder="Enter study task">
-<input id="timeLimit" type="number" placeholder="Time limit (minutes)">
 <button onclick="addTask()">Add Task</button>
-
-<p id="motivation"></p>
 
 <ul id="taskList"></ul>
 
