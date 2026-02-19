@@ -8,129 +8,133 @@
 body{
 margin:0;
 font-family:Segoe UI;
-background:linear-gradient(135deg,#4e73df,#764ba2);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
+background:linear-gradient(135deg,#4e73df,#9b59b6);
 color:white;
 }
 
-.screen{
-display:none;
-background:rgba(0,0,0,0.4);
+.screen{display:none;height:100vh;justify-content:center;align-items:center;flex-direction:column;}
+.active{display:flex;}
+
+.card{
+background:rgba(255,255,255,0.1);
 padding:30px;
 border-radius:15px;
-width:100%;
-max-width:500px;
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+width:320px;
 text-align:center;
-position:relative;
 }
-
-.active{display:block;}
 
 input,select{
 width:100%;
 padding:10px;
 margin:8px 0;
-border:none;
 border-radius:8px;
+border:none;
 }
 
 button{
-padding:10px 18px;
+padding:8px 15px;
 border:none;
 border-radius:8px;
+cursor:pointer;
+margin:5px;
 background:white;
-color:#764ba2;
+color:#4e73df;
 font-weight:bold;
-cursor:pointer;
-margin-top:6px;
 }
 
-.menu-btn{
+#menuBtn{
 position:absolute;
-top:10px;
+top:15px;
 left:15px;
-font-size:24px;
+font-size:22px;
 cursor:pointer;
 }
 
-.side-menu{
-display:none;
+#menu{
 position:absolute;
-top:0;
-left:0;
-width:200px;
-height:100%;
-background:#222;
-padding:20px;
+top:50px;
+left:15px;
+background:white;
+color:black;
+padding:10px;
+border-radius:10px;
+display:none;
+flex-direction:column;
 }
 
-.side-menu.active{display:block;}
-
-.side-menu button{
-width:100%;
-background:#333;
+#menu button{
+background:#4e73df;
 color:white;
 margin:5px 0;
 }
 
-#avatar{
-width:100px;
-height:100px;
-border-radius:50%;
-margin:15px auto;
-animation:float 3s infinite alternate;
+.progress{
+width:100%;
+background:white;
+border-radius:10px;
+margin-top:10px;
 }
 
-@keyframes float{
-0%{transform:translateY(0);}
-100%{transform:translateY(10px);}
+.progress-bar{
+height:20px;
+width:0%;
+background:#2ecc71;
+border-radius:10px;
+text-align:center;
+color:black;
+font-size:12px;
 }
+
+li{margin:10px 0;}
 </style>
 </head>
 
 <body>
 
-<div class="screen active" id="register">
+<!-- REGISTER -->
+<div id="register" class="screen active">
+<div class="card">
 <h2>Register</h2>
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
-<input id="age" type="number" placeholder="Age">
-
-<select id="gender">
+<input id="regUser" placeholder="Username">
+<input id="regPass" type="password" placeholder="Password">
+<input id="regAge" placeholder="Age">
+<select id="regGender">
 <option value="">Select Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
-
-<select id="study">
+<select id="regStudy">
 <option value="">What are you studying?</option>
 <option>School</option>
 <option>College</option>
 <option>Special Course</option>
 </select>
-
-<button onclick="registerUser()">Register</button>
+<button onclick="register()">Register</button>
 <p>Already have account? <button onclick="showScreen('login')">Login</button></p>
 </div>
+</div>
 
-<div class="screen" id="login">
+<!-- LOGIN -->
+<div id="login" class="screen">
+<div class="card">
 <h2>Login</h2>
 <input id="loginUser" placeholder="Username">
 <input id="loginPass" type="password" placeholder="Password">
-<button onclick="loginUser()">Login</button>
+<button onclick="login()">Login</button>
 <p>No account? <button onclick="showScreen('register')">Register</button></p>
 </div>
+</div>
 
-<div class="screen" id="dashboard">
-<div class="menu-btn" onclick="toggleMenu()">⋮</div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen">
 
-<div class="side-menu" id="menu">
-<button onclick="toggleMenu()">Close</button>
+<div id="menuBtn" onclick="toggleMenu()">⋮</div>
+
+<div id="menu">
 <button onclick="openProfile()">Profile</button>
+<button onclick="openDates()">My Dates</button>
+<button onclick="updateStreak()">Update Streak</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -138,76 +142,177 @@ animation:float 3s infinite alternate;
 <p id="quote"></p>
 
 <input id="taskInput" placeholder="Enter task">
-<button onclick="addTask()">Add</button>
-<ul id="taskList"></ul>
+<button onclick="addTask()">Add Task</button>
 
-<h3>🔥 Streak</h3>
-<p id="streak"></p>
-<button onclick="updateStreak()">Mark Today Studied</button>
+<div class="progress">
+<div id="progressBar" class="progress-bar">0%</div>
 </div>
 
-<div class="screen" id="profile">
-<h2>Your Profile</h2>
-<div id="avatar"></div>
-<p id="profileInfo"></p>
+<ul id="taskList"></ul>
+
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="screen">
+<div class="card">
+<h2>Profile</h2>
+<div id="profileInfo"></div>
+<button onclick="showMarks()">See Marks</button>
+<div id="marksArea"></div>
 <button onclick="showScreen('dashboard')">Back</button>
+</div>
+</div>
+
+<!-- MY DATES -->
+<div id="dates" class="screen">
+<div class="card">
+<h2>My Dates</h2>
+<input id="subj" placeholder="Subject">
+<input id="examDate" type="date">
+<input id="marks" placeholder="Marks">
+<button onclick="saveExam()">Save</button>
+<button onclick="showScreen('dashboard')">Back</button>
+</div>
 </div>
 
 <script>
+
+/* SCREEN SWITCH */
 function showScreen(id){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
-function registerUser(){
-let username=document.getElementById("username").value;
-let password=document.getElementById("password").value;
-let age=document.getElementById("age").value;
-let gender=document.getElementById("gender").value;
-let study=document.getElementById("study").value;
-
-if(!username||!password||!age||!gender||!study){
+/* REGISTER */
+function register(){
+let data={
+username:regUser.value,
+password:regPass.value,
+age:regAge.value,
+gender:regGender.value,
+study:regStudy.value
+};
+if(!data.username||!data.password||!data.age||!data.gender||!data.study){
 alert("Fill all fields");
 return;
 }
-
-localStorage.setItem("profile",JSON.stringify({
-username,password,age,gender,study
-}));
-
-alert("Registered Successfully!");
+localStorage.setItem("profile",JSON.stringify(data));
+alert("Registered!");
 showScreen("login");
 }
 
-function loginUser(){
-let u=document.getElementById("loginUser").value;
-let p=document.getElementById("loginPass").value;
-let profile=JSON.parse(localStorage.getItem("profile"));
-
-if(profile && u===profile.username && p===profile.password){
+/* LOGIN */
+function login(){
+let p=JSON.parse(localStorage.getItem("profile"));
+if(p && loginUser.value===p.username && loginPass.value===p.password){
 localStorage.setItem("logged","yes");
 loadDashboard();
 }else{
-alert("Invalid credentials");
+alert("Wrong credentials");
 }
 }
 
 function loadDashboard(){
 showScreen("dashboard");
-let profile=JSON.parse(localStorage.getItem("profile"));
-document.getElementById("welcome").innerText="Welcome "+profile.username;
-
-let quotes=[
-"Stay consistent.",
-"You are improving daily.",
-"Discipline wins.",
-"Keep pushing forward."
-];
-document.getElementById("quote").innerText=
-quotes[Math.floor(Math.random()*quotes.length)];
-
+let p=JSON.parse(localStorage.getItem("profile"));
+welcome.innerText="Welcome "+p.username;
+let quotes=["Stay strong.","You can do it.","One step at a time.","Focus & Win."];
+quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
 loadTasks();
-loadStreak();
+}
+
+/* TASK SYSTEM */
+function addTask(){
+let text=taskInput.value.trim();
+if(!text) return;
+
+let deadline=prompt("Enter deadline (YYYY-MM-DD)");
+let today=new Date().toLocaleDateString();
+
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+tasks.push({text,created:today,deadline,done:false});
+localStorage.setItem("tasks",JSON.stringify(tasks));
+taskInput.value="";
+loadTasks();
+}
+
+function loadTasks(){
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+taskList.innerHTML="";
+let done=0;
+
+tasks.forEach((t,i)=>{
+let li=document.createElement("li");
+
+let span=document.createElement("span");
+span.innerHTML=t.text+"<br><small>📅 "+t.created+" | ⏳ "+(t.deadline||"No deadline")+"</small>";
+
+if(t.done){span.style.textDecoration="line-through";done++;}
+
+let check=document.createElement("input");
+check.type="checkbox";
+check.checked=t.done;
+check.onchange=function(){
+t.done=!t.done;
+localStorage.setItem("tasks",JSON.stringify(tasks));
+if(t.done) alert("Great job! Keep going 🚀");
+loadTasks();
+};
+
+li.appendChild(span);
+li.appendChild(check);
+taskList.appendChild(li);
+});
+
+let percent=tasks.length?Math.round((done/tasks.length)*100):0;
+progressBar.style.width=percent+"%";
+progressBar.innerText=percent+"%";
+}
+
+/* STREAK */
+function updateStreak(){
+let today=new Date().toDateString();
+let last=localStorage.getItem("last");
+if(last===today){alert("Already updated today!");return;}
+let s=parseInt(localStorage.getItem("streak")||0);
+s++;
+localStorage.setItem("streak",s);
+localStorage.setItem("last",today);
+alert("Streak updated! 🔥");
+}
+
+/* PROFILE */
+function openProfile(){
+showScreen("profile");
+let p=JSON.parse(localStorage.getItem("profile"));
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+profileInfo.innerHTML=
+"Username: "+p.username+"<br>"+
+"Age: "+p.age+"<br>"+
+"Gender: "+p.gender+"<br>"+
+"Study: "+p.study+"<br>"+
+"Total Tasks: "+tasks.length+"<br>"+
+"Streak: "+(localStorage.getItem("streak")||0)+" days";
+}
+
+function showMarks(){
+let exams=JSON.parse(localStorage.getItem("exams"))||[];
+marksArea.innerHTML=exams.map(e=>e.subject+" - "+e.marks+" marks").join("<br>");
+}
+
+/* MY DATES */
+function openDates(){showScreen("dates");}
+
+function saveExam(){
+let exams=JSON.parse(localStorage.getItem("exams"))||[];
+exams.push({subject:subj.value,date:examDate.value,marks:marks.value});
+localStorage.setItem("exams",JSON.stringify(exams));
+alert("Saved! Keep pushing forward 💪");
+}
+
+/* MENU */
+function toggleMenu(){
+menu.style.display=menu.style.display==="flex"?"none":"flex";
 }
 
 function logout(){
@@ -215,75 +320,10 @@ localStorage.removeItem("logged");
 location.reload();
 }
 
-function toggleMenu(){
-document.getElementById("menu").classList.toggle("active");
-}
-
-function addTask(){
-let task=document.getElementById("taskInput").value;
-if(!task)return;
-
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.push(task);
-localStorage.setItem("tasks",JSON.stringify(tasks));
-document.getElementById("taskInput").value="";
-loadTasks();
-}
-
-function loadTasks(){
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-let list=document.getElementById("taskList");
-list.innerHTML="";
-tasks.forEach(t=>{
-let li=document.createElement("li");
-li.innerText=t;
-list.appendChild(li);
-});
-}
-
-function loadStreak(){
-let streak=localStorage.getItem("streak")||0;
-document.getElementById("streak").innerText=streak+" days";
-}
-
-function updateStreak(){
-let today=new Date().toDateString();
-let last=localStorage.getItem("lastDate");
-
-if(last===today){
-alert("Already updated today!");
-return;
-}
-
-let streak=parseInt(localStorage.getItem("streak"))||0;
-streak++;
-localStorage.setItem("streak",streak);
-localStorage.setItem("lastDate",today);
-loadStreak();
-}
-
-function openProfile(){
-toggleMenu();
-showScreen("profile");
-
-let profile=JSON.parse(localStorage.getItem("profile"));
-document.getElementById("profileInfo").innerHTML=
-"Username: "+profile.username+"<br>"+
-"Age: "+profile.age+"<br>"+
-"Gender: "+profile.gender+"<br>"+
-"Study: "+profile.study;
-
-let avatar=document.getElementById("avatar");
-avatar.style.background=
-profile.gender==="Male"
-? "linear-gradient(135deg,#4e73df,#00c6ff)"
-: "linear-gradient(135deg,#ff6ec4,#7873f5)";
-}
-
 if(localStorage.getItem("logged")==="yes"){
 loadDashboard();
 }
-</script>
 
+</script>
 </body>
 </html>
