@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
+body{
   margin:0;
   font-family:'Segoe UI',sans-serif;
   background:linear-gradient(-45deg,#0f172a,#1e1b4b,#312e81,#1e293b);
@@ -64,7 +64,10 @@ input{
   background:rgba(255,255,255,0.1);
 }
 
-.main{flex:1;padding:40px;}
+.main{
+  flex:1;
+  padding:40px;
+}
 
 .card{
   background:rgba(255,255,255,0.08);
@@ -93,12 +96,14 @@ input{
 
 <body>
 
+<!-- LANDING -->
 <div id="landing" class="section">
   <h1 style="font-size:48px;">Welcome to PadiBuddy 🚀</h1>
   <p>Your AI-powered study planner for smarter preparation.</p>
-  <button id="startBtn" onclick="alert('Clicked')">Start Planning</button>
+  <button id="startBtn">Start Planning</button>
 </div>
 
+<!-- AUTH -->
 <div id="auth" class="section hidden">
   <h2>Register / Login</h2>
   <input id="username" placeholder="Username"><br>
@@ -107,15 +112,16 @@ input{
   <button id="loginBtn">Login</button>
 </div>
 
+<!-- APP -->
 <div id="app" class="app hidden">
 
 <div class="sidebar">
 <h2>PadiBuddy</h2>
-<button onclick="showPage('dashboard')">Dashboard</button>
-<button onclick="showPage('planner')">Planner</button>
-<button onclick="showPage('ai')">AI Assistant</button>
-<button onclick="showPage('profile')">Profile</button>
-<button onclick="logout()">Logout</button>
+<button data-page="dashboard">Dashboard</button>
+<button data-page="planner">Planner</button>
+<button data-page="ai">AI Assistant</button>
+<button data-page="profile">Profile</button>
+<button id="logoutBtn">Logout</button>
 </div>
 
 <div class="main">
@@ -142,13 +148,13 @@ input{
 
 <div id="planner" class="page hidden">
 <input id="taskInput" placeholder="Enter task">
-<button onclick="addTask()">Add</button>
+<button id="addTaskBtn">Add</button>
 <ul id="taskList"></ul>
 </div>
 
 <div id="ai" class="page hidden">
 <input id="aiInput" placeholder="Ask something">
-<button onclick="aiReply()">Ask</button>
+<button id="aiBtn">Ask</button>
 <div id="aiOutput"></div>
 </div>
 
@@ -194,37 +200,47 @@ renderTasks();
 updateStreak();
 }
 
-function logout(){
+document.getElementById("logoutBtn").addEventListener("click",()=>{
 localStorage.removeItem("loggedIn");
 location.reload();
-}
+});
 
 window.onload=()=>{
 if(localStorage.getItem("loggedIn")==="true") openApp();
-}
+};
 
-function showPage(id){
+document.querySelectorAll("[data-page]").forEach(btn=>{
+btn.addEventListener("click",()=>{
 document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
-}
+document.getElementById(btn.dataset.page).classList.remove("hidden");
+});
+});
 
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
 
-function addTask(){
+document.getElementById("addTaskBtn").addEventListener("click",()=>{
 if(taskInput.value==="") return;
 tasks.push({name:taskInput.value,done:false});
 localStorage.setItem("tasks",JSON.stringify(tasks));
 taskInput.value="";
 renderTasks();
-}
+});
 
 function renderTasks(){
 taskList.innerHTML="";
 let completed=0;
 tasks.forEach((t,i)=>{
 let li=document.createElement("li");
-li.innerHTML=`<input type="checkbox" ${t.done?"checked":""}
-onchange="toggleTask(${i})"> ${t.name}`;
+let checkbox=document.createElement("input");
+checkbox.type="checkbox";
+checkbox.checked=t.done;
+checkbox.addEventListener("change",()=>{
+tasks[i].done=!tasks[i].done;
+localStorage.setItem("tasks",JSON.stringify(tasks));
+renderTasks();
+});
+li.appendChild(checkbox);
+li.append(" "+t.name);
 taskList.appendChild(li);
 if(t.done) completed++;
 });
@@ -233,12 +249,6 @@ completedTasks.innerText=completed;
 let percent=tasks.length?Math.round((completed/tasks.length)*100):0;
 progressFill.style.width=percent+"%";
 progressFill.innerText=percent+"%";
-}
-
-function toggleTask(i){
-tasks[i].done=!tasks[i].done;
-localStorage.setItem("tasks",JSON.stringify(tasks));
-renderTasks();
 }
 
 function updateStreak(){
@@ -253,14 +263,16 @@ localStorage.setItem("lastVisit",today);
 streakCount.innerText=streak;
 }
 
-function aiReply(){
+document.getElementById("aiBtn").addEventListener("click",()=>{
 let q=aiInput.value.toLowerCase();
 let r="Stay consistent and revise daily.";
 if(q.includes("exam")) r="Create 7-day revision plan.";
 if(q.includes("productivity")) r="Use Pomodoro technique.";
 if(q.includes("weak")) r="Focus 30 mins extra daily.";
 aiOutput.innerHTML="<p><b>AI:</b> "+r+"</p>";
-}
+});
+
+renderTasks();
 
 </script>
 
