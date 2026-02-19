@@ -1,26 +1,26 @@
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
+box-sizing:border-box;
 font-family:'Segoe UI',sans-serif;
 }
 
 body{
 background:linear-gradient(135deg,#4e73df,#764ba2);
 min-height:100vh;
-color:white;
 display:flex;
 justify-content:center;
 align-items:center;
+color:white;
 }
 
 .screen{
 width:100%;
-max-width:550px;
+max-width:500px;
 background:rgba(0,0,0,0.35);
 padding:30px;
-border-radius:18px;
-box-shadow:0 15px 40px rgba(0,0,0,0.4);
+border-radius:15px;
+box-shadow:0 10px 40px rgba(0,0,0,0.4);
 text-align:center;
 display:none;
 position:relative;
@@ -39,7 +39,7 @@ border-radius:8px;
 }
 
 button{
-padding:10px 20px;
+padding:10px 18px;
 margin-top:8px;
 border:none;
 border-radius:8px;
@@ -54,9 +54,47 @@ button:hover{
 transform:scale(1.05);
 }
 
+.menu-btn{
+position:absolute;
+top:10px;
+left:15px;
+font-size:24px;
+cursor:pointer;
+}
+
+.side-menu{
+position:absolute;
+top:0;
+left:-100%;
+width:220px;
+height:100%;
+background:#1e1e1e;
+padding:20px;
+transition:0.3s;
+border-top-left-radius:15px;
+border-bottom-left-radius:15px;
+}
+
+.side-menu.active{
+left:0;
+}
+
+.side-menu button{
+width:100%;
+margin:8px 0;
+background:#333;
+color:white;
+}
+
+.quote{
+margin-top:10px;
+font-style:italic;
+color:#ddd;
+}
+
 ul{
 list-style:none;
-margin-top:10px;
+margin-top:15px;
 text-align:left;
 }
 
@@ -70,41 +108,11 @@ justify-content:space-between;
 align-items:center;
 }
 
-.menu-btn{
-position:absolute;
-top:15px;
-left:15px;
-font-size:22px;
-cursor:pointer;
-}
-
-.side-menu{
-position:absolute;
-top:0;
-left:-100%;
-width:220px;
-height:100%;
-background:#222;
-padding:20px;
-transition:0.3s;
-}
-
-.side-menu.active{
-left:0;
-}
-
-.side-menu button{
-width:100%;
-margin:8px 0;
-background:#444;
-color:white;
-}
-
 .progress-container{
 background:rgba(255,255,255,0.2);
 border-radius:10px;
 height:15px;
-margin-top:10px;
+margin-top:15px;
 overflow:hidden;
 }
 
