@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PadiBuddy</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 40px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #6366f1;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      margin: 20px auto;
+      width: 300px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>PadiBuddy - AI Study Planner</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Login</h3>
+    <input type="text" placeholder="Username"><br>
+    <input type="password" placeholder="Password"><br>
+    <button onclick="alert('Demo Login Successful')">Login</button>
+  </div>
+
+  <div class="card">
+    <h3>Study Planner</h3>
+    <input type="text" id="task" placeholder="Enter study task">
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <div class="card">
+    <h3>AI Assistant</h3>
+    <input type="text" id="aiInput" placeholder="Ask something...">
+    <button onclick="aiReply()">Ask</button>
+    <p id="aiOutput"></p>
+  </div>
+
+</div>
+
+<script>
+function addTask() {
+  let task = document.getElementById("task").value;
+  let li = document.createElement("li");
+  li.innerText = task;
+  document.getElementById("taskList").appendChild(li);
+}
+
+function aiReply() {
+  let question = document.getElementById("aiInput").value;
+  let reply = "Stay consistent and revise daily.";
+
+  if (question.toLowerCase().includes("exam")) {
+    reply = "Start revision 7 days before exam and practice mock tests.";
+  }
+
+  document.getElementById("aiOutput").innerText = reply;
+}
+</script>
+
+</body>
+</html>
