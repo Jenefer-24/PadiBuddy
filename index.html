@@ -13,7 +13,7 @@ color:white;
 text-align:center;
 }
 
-/* 3 DOT MENU */
+/* 3 DOT */
 .menu-icon{
 position:absolute;
 top:15px;
@@ -32,7 +32,7 @@ color:black;
 border-radius:8px;
 padding:10px;
 display:none;
-width:150px;
+width:170px;
 box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
@@ -78,7 +78,6 @@ button:hover{
 opacity:0.9;
 }
 
-/* Hidden */
 .hidden{
 display:none;
 }
@@ -109,18 +108,40 @@ margin:8px auto;
 width:60%;
 text-align:left;
 }
+
+/* Chat */
+.chat-box{
+width:70%;
+margin:20px auto;
+background:rgba(255,255,255,0.1);
+padding:15px;
+border-radius:10px;
+height:300px;
+overflow-y:auto;
+text-align:left;
+}
+
+.user-msg{
+text-align:right;
+margin:5px;
+}
+
+.ai-msg{
+text-align:left;
+margin:5px;
+color:#ffeaa7;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- 3 DOT -->
 <div class="menu-icon" id="menuIcon" onclick="toggleMenu()">⋮</div>
 
 <div class="dropdown" id="dropdownMenu">
-<button onclick="showProfile()">Profile</button>
-<button onclick="alert('AI Assistance coming soon 🚀')">AI Assistance</button>
-<button onclick="alert('My Dates feature coming soon 📅')">My Dates</button>
+<button onclick="openProfile()">Profile</button>
+<button onclick="openAI()">AI Assistance</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -180,9 +201,27 @@ New user?
 <button onclick="updateStreak()">Update Streak</button>
 </div>
 
+<!-- PROFILE PAGE -->
+<div id="profilePage" class="hidden">
+<h2>Profile</h2>
+<div id="profileContent"></div>
+<button onclick="goBack()">Back</button>
+</div>
+
+<!-- AI PAGE -->
+<div id="aiPage" class="hidden">
+<h2>AI Study Assistant</h2>
+
+<div class="chat-box" id="chatBox"></div>
+
+<input id="aiInput" placeholder="Ask something...">
+<button onclick="sendAI()">Send</button>
+<br>
+<button onclick="goBack()">Back</button>
+</div>
+
 <script>
 
-/* Quotes */
 const quotes=[
 "Focus & Win.",
 "Small progress is still progress.",
@@ -193,45 +232,34 @@ const quotes=[
 
 /* MENU */
 function toggleMenu(){
-let menu=document.getElementById("dropdownMenu");
-menu.style.display = menu.style.display==="block" ? "none" : "block";
+dropdownMenu.style.display =
+dropdownMenu.style.display==="block"?"none":"block";
 }
 
 /* REGISTER */
 function register(){
-let user=regUser.value;
-let pass=regPass.value;
-let age=regAge.value;
-let gender=regGender.value;
-let study=regStudy.value;
-
-if(!user||!pass){ alert("Fill required fields"); return; }
-
 let data={
-user:user,
-pass:pass,
-age:age,
-gender:gender,
-study:study,
+user:regUser.value,
+pass:regPass.value,
+age:regAge.value,
+gender:regGender.value,
+study:regStudy.value,
 tasks:[],
 streak:0,
 lastStreakDate:null
 };
 
 localStorage.setItem("padiUser",JSON.stringify(data));
-alert("Registered successfully!");
+alert("Registered!");
 showLogin();
 }
 
 /* LOGIN */
 function login(){
-let user=loginUser.value;
-let pass=loginPass.value;
-
 let saved=JSON.parse(localStorage.getItem("padiUser"));
-if(!saved){ alert("No account found"); return; }
+if(loginUser.value===saved.user &&
+loginPass.value===saved.pass){
 
-if(user===saved.user && pass===saved.pass){
 registerBox.classList.add("hidden");
 loginBox.classList.add("hidden");
 dashboard.classList.remove("hidden");
@@ -241,6 +269,7 @@ welcomeText.innerText="Welcome "+saved.user;
 quoteText.innerText=quotes[Math.floor(Math.random()*quotes.length)];
 loadTasks();
 streakCount.innerText=saved.streak;
+
 }else{
 alert("Wrong credentials");
 }
@@ -256,19 +285,16 @@ loginBox.classList.add("hidden");
 registerBox.classList.remove("hidden");
 }
 
-/* ADD TASK */
+/* TASK */
 function addTask(){
-let text=taskInput.value;
-if(!text){ alert("Enter task"); return; }
-
-let deadline=deadlineInput.value||"No deadline";
-let today=new Date().toLocaleDateString();
-
 let data=JSON.parse(localStorage.getItem("padiUser"));
+let text=taskInput.value;
+if(!text) return;
+
 data.tasks.push({
 text:text,
-created:today,
-deadline:deadline,
+created:new Date().toLocaleDateString(),
+deadline:deadlineInput.value||"No deadline",
 done:false
 });
 
@@ -278,44 +304,36 @@ deadlineInput.value="";
 loadTasks();
 }
 
-/* LOAD TASKS */
 function loadTasks(){
 let data=JSON.parse(localStorage.getItem("padiUser"));
-let list=document.getElementById("taskList");
-list.innerHTML="";
-
-let completed=0;
+taskList.innerHTML="";
+let done=0;
 
 data.tasks.forEach((t,i)=>{
 let div=document.createElement("div");
 div.className="task";
+div.innerHTML="<b>"+t.text+"</b><br><small>📅 "+
+t.created+" | ⏳ "+t.deadline+"</small>";
 
-div.innerHTML=
-"<b>"+t.text+"</b><br>"+
-"<small>📅 "+t.created+" | ⏳ "+t.deadline+"</small>";
+let check=document.createElement("input");
+check.type="checkbox";
+check.checked=t.done;
 
-let checkbox=document.createElement("input");
-checkbox.type="checkbox";
-checkbox.checked=t.done;
-
-checkbox.onchange=function(){
+check.onchange=function(){
 data.tasks[i].done=this.checked;
 localStorage.setItem("padiUser",JSON.stringify(data));
+if(this.checked) alert("Amazing! Keep going 🚀");
 loadTasks();
-if(this.checked){
-alert("Great job! Keep going! 🚀");
-}
 };
 
-div.appendChild(checkbox);
-list.appendChild(div);
+div.appendChild(check);
+taskList.appendChild(div);
 
-if(t.done) completed++;
+if(t.done) done++;
 });
 
 let percent=data.tasks.length?
-(completed/data.tasks.length)*100:0;
-
+(done/data.tasks.length)*100:0;
 progressBar.style.width=percent+"%";
 }
 
@@ -329,29 +347,67 @@ alert("Already updated today!");
 return;
 }
 
-data.streak+=1;
+data.streak++;
 data.lastStreakDate=today;
-
 localStorage.setItem("padiUser",JSON.stringify(data));
 streakCount.innerText=data.streak;
-alert("Streak updated! 🔥");
+alert("Streak Updated 🔥");
 }
 
-/* PROFILE */
-function showProfile(){
+/* PROFILE PAGE */
+function openProfile(){
+dashboard.classList.add("hidden");
+aiPage.classList.add("hidden");
+profilePage.classList.remove("hidden");
+
 let data=JSON.parse(localStorage.getItem("padiUser"));
-alert(
-"Username: "+data.user+
-"\nAge: "+data.age+
-"\nGender: "+data.gender+
-"\nStudying: "+data.study+
-"\nStreak: "+data.streak+" days"
-);
+
+profileContent.innerHTML=
+"<p><b>Username:</b> "+data.user+"</p>"+
+"<p><b>Age:</b> "+data.age+"</p>"+
+"<p><b>Gender:</b> "+data.gender+"</p>"+
+"<p><b>Studying:</b> "+data.study+"</p>"+
+"<p><b>Streak:</b> "+data.streak+" days</p>";
+}
+
+/* AI PAGE */
+function openAI(){
+dashboard.classList.add("hidden");
+profilePage.classList.add("hidden");
+aiPage.classList.remove("hidden");
+}
+
+function sendAI(){
+let input=aiInput.value;
+if(!input) return;
+
+chatBox.innerHTML+="<div class='user-msg'>"+input+"</div>";
+
+let reply="Stay consistent. Break your task into small goals.";
+
+if(input.toLowerCase().includes("plan"))
+reply="Try 45 min focus + 10 min break sessions.";
+
+if(input.toLowerCase().includes("exam"))
+reply="Revise daily and solve previous year questions.";
+
+chatBox.innerHTML+="<div class='ai-msg'>"+reply+"</div>";
+aiInput.value="";
+chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+/* BACK */
+function goBack(){
+profilePage.classList.add("hidden");
+aiPage.classList.add("hidden");
+dashboard.classList.remove("hidden");
 }
 
 /* LOGOUT */
 function logout(){
 dashboard.classList.add("hidden");
+profilePage.classList.add("hidden");
+aiPage.classList.add("hidden");
 loginBox.classList.remove("hidden");
 menuIcon.style.display="none";
 dropdownMenu.style.display="none";
