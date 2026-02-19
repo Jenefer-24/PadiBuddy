@@ -1,137 +1,84 @@
-function switchScreen(id){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-}
+/* MY DATES SECTION */
 
-function toggleMenu(){
-document.getElementById("sideMenu").classList.toggle("active");
-}
+function saveResult(){
+let subject=document.getElementById("resultSubject").value;
+let type=document.getElementById("resultType").value;
+let marks=document.getElementById("resultMarks").value;
 
-function register(){
-let username=document.getElementById("username").value;
-let password=document.getElementById("password").value;
-let age=document.getElementById("age").value;
-let gender=document.getElementById("gender").value;
-let study=document.getElementById("study").value;
-
-if(username===""||password===""||age===""){
-alert("Fill all details");
+if(!subject||!type||!marks){
+alert("Fill all fields");
 return;
 }
 
-localStorage.setItem("profile",JSON.stringify({
-username,password,age,gender,study
-}));
+let results=JSON.parse(localStorage.getItem("results"))||[];
+results.push({subject,type,marks});
+localStorage.setItem("results",JSON.stringify(results));
 
-localStorage.setItem("streak",0);
-localStorage.setItem("lastStreak","");
-alert("Registered successfully!");
-switchScreen("login");
+document.getElementById("resultSubject").value="";
+document.getElementById("resultType").value="";
+document.getElementById("resultMarks").value="";
+
+loadResults();
+showResultMotivation(marks);
 }
 
-function login(){
-let username=document.getElementById("loginUser").value;
-let password=document.getElementById("loginPass").value;
-let profile=JSON.parse(localStorage.getItem("profile"));
-
-if(profile && username===profile.username && password===profile.password){
-localStorage.setItem("logged","true");
-openDashboard();
-}else{
-alert("Invalid username or password");
-}
-}
-
-function openDashboard(){
-switchScreen("dashboard");
-let profile=JSON.parse(localStorage.getItem("profile"));
-document.getElementById("welcomeText").innerText="Welcome "+profile.username;
-showQuote();
-loadTasks();
-loadStreak();
-}
-
-function logout(){
-localStorage.setItem("logged","false");
-location.reload();
-}
-
-function showQuote(){
-let quotes=[
-"Stay consistent.",
-"Focus beats motivation.",
-"Discipline creates success.",
-"Small steps daily.",
-"Your future self is watching."
-];
-let random=quotes[Math.floor(Math.random()*quotes.length)];
-document.getElementById("quote").innerText=random;
-}
-
-function addTask(){
-let task=document.getElementById("taskInput").value;
-if(task==="") return;
-
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.push({task,done:false});
-localStorage.setItem("tasks",JSON.stringify(tasks));
-document.getElementById("taskInput").value="";
-loadTasks();
-}
-
-function loadTasks(){
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-let list=document.getElementById("taskList");
+function loadResults(){
+let results=JSON.parse(localStorage.getItem("results"))||[];
+let list=document.getElementById("resultList");
 list.innerHTML="";
-let completed=0;
 
-tasks.forEach((t,index)=>{
+results.forEach(r=>{
 let li=document.createElement("li");
-let span=document.createElement("span");
-span.innerText=t.task;
-
-let checkbox=document.createElement("input");
-checkbox.type="checkbox";
-checkbox.checked=t.done;
-
-checkbox.onchange=function(){
-t.done=!t.done;
-localStorage.setItem("tasks",JSON.stringify(tasks));
-loadTasks();
-};
-
-li.appendChild(span);
-li.appendChild(checkbox);
+li.innerText=r.subject+" - "+r.type+" : "+r.marks+" marks";
 list.appendChild(li);
-
-if(t.done) completed++;
 });
-
-let percent=tasks.length?Math.round((completed/tasks.length)*100):0;
-document.getElementById("progressBar").style.width=percent+"%";
 }
 
-function loadStreak(){
-let streak=parseInt(localStorage.getItem("streak"))||0;
-document.getElementById("streakText").innerText=streak+" days";
+function showResultMotivation(marks){
+marks=parseInt(marks);
+
+if(marks>=80){
+alert("Excellent work! Keep pushing forward 🚀");
+}else if(marks>=50){
+alert("Good job! You can improve even more 💪");
+}else{
+alert("Don’t give up! Every setback is a setup for a comeback 🔥");
+}
 }
 
-function markStudied(){
-let today=new Date().toDateString();
-let last=localStorage.getItem("lastStreak");
-let streak=parseInt(localStorage.getItem("streak"))||0;
+function saveExam(){
+let subject=document.getElementById("examSubject").value;
+let date=document.getElementById("examDate").value;
 
-if(last===today){
-alert("Already updated today!");
+if(!subject||!date){
+alert("Fill all fields");
 return;
 }
 
-streak++;
-localStorage.setItem("streak",streak);
-localStorage.setItem("lastStreak",today);
-loadStreak();
+let exams=JSON.parse(localStorage.getItem("exams"))||[];
+exams.push({subject,date});
+localStorage.setItem("exams",JSON.stringify(exams));
+
+document.getElementById("examSubject").value="";
+document.getElementById("examDate").value="";
+
+loadExams();
 }
 
-if(localStorage.getItem("logged")==="true"){
-openDashboard();
+function loadExams(){
+let exams=JSON.parse(localStorage.getItem("exams"))||[];
+let list=document.getElementById("examList");
+list.innerHTML="";
+
+exams.forEach(e=>{
+let li=document.createElement("li");
+li.innerText=e.subject+" - "+e.date;
+list.appendChild(li);
+});
 }
+
+/* Load when opening My Dates */
+document.getElementById("myDates").addEventListener("click",function(){
+loadResults();
+loadExams();
+});
