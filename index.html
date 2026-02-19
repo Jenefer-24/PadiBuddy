@@ -8,8 +8,8 @@
 body{
 margin:0;
 font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#667eea,#764ba2);
-height:100vh;
+background:linear-gradient(135deg,#4e73df,#1cc88a);
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -17,30 +17,33 @@ color:white;
 }
 
 .container{
-width:350px;
-background:rgba(0,0,0,0.3);
-padding:30px;
-border-radius:12px;
+width:380px;
+background:rgba(0,0,0,0.35);
+padding:25px;
+border-radius:15px;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
 text-align:center;
 }
+
+h1,h2{margin:10px 0;}
 
 input{
 width:100%;
 padding:8px;
-margin:8px 0;
+margin:6px 0;
 border:none;
 border-radius:6px;
 }
 
 button{
 padding:8px 15px;
-margin-top:10px;
+margin-top:8px;
 border:none;
 border-radius:6px;
 background:white;
-color:#764ba2;
-cursor:pointer;
+color:#1cc88a;
 font-weight:bold;
+cursor:pointer;
 }
 
 .hidden{display:none;}
@@ -48,6 +51,25 @@ font-weight:bold;
 ul{
 text-align:left;
 padding-left:15px;
+margin-top:10px;
+}
+
+li{
+margin:5px 0;
+}
+
+.progress{
+background:rgba(255,255,255,0.3);
+border-radius:6px;
+overflow:hidden;
+height:15px;
+margin-top:10px;
+}
+
+.progress-bar{
+height:100%;
+background:#00ffcc;
+width:0%;
 }
 </style>
 </head>
@@ -55,8 +77,8 @@ padding-left:15px;
 <body>
 
 <div class="container" id="landing">
-<h1>PadiBuddy 🚀</h1>
-<p>Your simple study planner</p>
+<h1>PadiBuddy 📚</h1>
+<p>Your Personal Study Planner</p>
 <button onclick="showAuth()">Get Started</button>
 </div>
 
@@ -71,14 +93,38 @@ padding-left:15px;
 </div>
 
 <div class="container hidden" id="dashboard">
+
 <h2 id="welcome"></h2>
-<input id="taskInput" placeholder="Add task">
-<button onclick="addTask()">Add</button>
+<p id="todayDate"></p>
+
+<h3>🎯 Study Goal</h3>
+<input id="goalInput" placeholder="Enter today's goal">
+<button onclick="saveGoal()">Save Goal</button>
+<p id="savedGoal"></p>
+
+<h3>📚 Add Study Task</h3>
+<input id="subjectInput" placeholder="Subject">
+<input id="taskInput" placeholder="Task description">
+<button onclick="addTask()">Add Task</button>
+
 <ul id="taskList"></ul>
+
+<h3>📊 Progress</h3>
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+<p id="progressText"></p>
+
+<h3>🔥 Study Streak</h3>
+<p id="streakText"></p>
+<button onclick="markStudied()">Mark Today Studied</button>
+
 <button onclick="logout()">Logout</button>
+
 </div>
 
 <script>
+
 function showAuth(){
 landing.classList.add("hidden");
 auth.classList.remove("hidden");
@@ -113,7 +159,10 @@ function openDashboard(){
 auth.classList.add("hidden");
 dashboard.classList.remove("hidden");
 welcome.innerText="Welcome "+localStorage.getItem("email");
+todayDate.innerText="📅 "+new Date().toDateString();
+loadGoal();
 loadTasks();
+loadStreak();
 }
 
 function logout(){
@@ -121,11 +170,25 @@ localStorage.setItem("logged","false");
 location.reload();
 }
 
+function saveGoal(){
+localStorage.setItem("goal",goalInput.value);
+loadGoal();
+}
+
+function loadGoal(){
+savedGoal.innerText="Goal: "+(localStorage.getItem("goal")||"No goal set");
+}
+
 function addTask(){
-if(taskInput.value==="") return;
+if(subjectInput.value===""||taskInput.value==="") return;
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.push(taskInput.value);
+tasks.push({
+subject:subjectInput.value,
+task:taskInput.value,
+done:false
+});
 localStorage.setItem("tasks",JSON.stringify(tasks));
+subjectInput.value="";
 taskInput.value="";
 loadTasks();
 }
@@ -133,16 +196,45 @@ loadTasks();
 function loadTasks(){
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
 taskList.innerHTML="";
-tasks.forEach(t=>{
+let completed=0;
+
+tasks.forEach((t,index)=>{
 let li=document.createElement("li");
-li.innerText=t;
+let checkbox=document.createElement("input");
+checkbox.type="checkbox";
+checkbox.checked=t.done;
+checkbox.onchange=function(){
+t.done=!t.done;
+localStorage.setItem("tasks",JSON.stringify(tasks));
+loadTasks();
+};
+li.appendChild(checkbox);
+li.append(" "+t.subject+" - "+t.task);
 taskList.appendChild(li);
+if(t.done) completed++;
 });
+
+let percent=tasks.length?Math.round((completed/tasks.length)*100):0;
+progressBar.style.width=percent+"%";
+progressText.innerText=percent+"% completed";
+}
+
+function markStudied(){
+let streak=parseInt(localStorage.getItem("streak"))||0;
+streak++;
+localStorage.setItem("streak",streak);
+loadStreak();
+}
+
+function loadStreak(){
+let streak=parseInt(localStorage.getItem("streak"))||0;
+streakText.innerText=streak+" days";
 }
 
 if(localStorage.getItem("logged")==="true"){
 openDashboard();
 }
+
 </script>
 
 </body>
