@@ -7,97 +7,88 @@
 <style>
 body{
 margin:0;
-font-family:Segoe UI;
-background:linear-gradient(135deg,#4e73df,#9b59b6);
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#5f72be,#9b59b6);
 color:white;
-}
-
-.screen{display:none;height:100vh;justify-content:center;align-items:center;flex-direction:column;}
-.active{display:flex;}
-
-.card{
-background:rgba(255,255,255,0.1);
-padding:30px;
-border-radius:15px;
-backdrop-filter:blur(10px);
-width:320px;
 text-align:center;
 }
 
+/* Card */
+.card{
+background:rgba(0,0,0,0.2);
+padding:25px;
+border-radius:15px;
+width:400px;
+margin:80px auto;
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Inputs */
 input,select{
-width:100%;
+width:90%;
 padding:10px;
 margin:8px 0;
-border-radius:8px;
+border-radius:6px;
 border:none;
 }
 
+/* Buttons */
 button{
 padding:8px 15px;
 border:none;
-border-radius:8px;
+border-radius:6px;
 cursor:pointer;
-margin:5px;
 background:white;
-color:#4e73df;
+color:#6c5ce7;
 font-weight:bold;
+margin:5px;
 }
 
-#menuBtn{
-position:absolute;
-top:15px;
-left:15px;
-font-size:22px;
-cursor:pointer;
+button:hover{
+opacity:0.9;
 }
 
-#menu{
-position:absolute;
-top:50px;
-left:15px;
-background:white;
-color:black;
-padding:10px;
-border-radius:10px;
+/* Hidden */
+.hidden{
 display:none;
-flex-direction:column;
 }
 
-#menu button{
-background:#4e73df;
-color:white;
-margin:5px 0;
-}
-
+/* Progress */
 .progress{
-width:100%;
+width:60%;
 background:white;
 border-radius:10px;
-margin-top:10px;
+margin:15px auto;
+height:15px;
 }
 
 .progress-bar{
-height:20px;
-width:0%;
+height:100%;
 background:#2ecc71;
 border-radius:10px;
-text-align:center;
-color:black;
-font-size:12px;
+width:0%;
+transition:0.4s;
 }
 
-li{margin:10px 0;}
+/* Task */
+.task{
+background:rgba(255,255,255,0.15);
+padding:10px;
+border-radius:8px;
+margin:8px auto;
+width:60%;
+text-align:left;
+}
 </style>
 </head>
 
 <body>
 
 <!-- REGISTER -->
-<div id="register" class="screen active">
-<div class="card">
+<div class="card" id="registerBox">
 <h2>Register</h2>
 <input id="regUser" placeholder="Username">
-<input id="regPass" type="password" placeholder="Password">
+<input type="password" id="regPass" placeholder="Password">
 <input id="regAge" placeholder="Age">
 <select id="regGender">
 <option value="">Select Gender</option>
@@ -110,220 +101,208 @@ li{margin:10px 0;}
 <option>College</option>
 <option>Special Course</option>
 </select>
+<br>
 <button onclick="register()">Register</button>
-<p>Already have account? <button onclick="showScreen('login')">Login</button></p>
-</div>
+<br>
+Already have account?
+<button onclick="showLogin()">Login</button>
 </div>
 
 <!-- LOGIN -->
-<div id="login" class="screen">
-<div class="card">
+<div class="card hidden" id="loginBox">
 <h2>Login</h2>
 <input id="loginUser" placeholder="Username">
-<input id="loginPass" type="password" placeholder="Password">
+<input type="password" id="loginPass" placeholder="Password">
+<br>
 <button onclick="login()">Login</button>
-<p>No account? <button onclick="showScreen('register')">Register</button></p>
-</div>
+<br>
+New user?
+<button onclick="showRegister()">Register</button>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="screen">
-
-<div id="menuBtn" onclick="toggleMenu()">⋮</div>
-
-<div id="menu">
-<button onclick="openProfile()">Profile</button>
-<button onclick="openDates()">My Dates</button>
-<button onclick="updateStreak()">Update Streak</button>
-<button onclick="logout()">Logout</button>
-</div>
-
-<h2 id="welcome"></h2>
-<p id="quote"></p>
+<div id="dashboard" class="hidden">
+<h2 id="welcomeText"></h2>
+<p id="quoteText"></p>
 
 <input id="taskInput" placeholder="Enter task">
+<input type="date" id="deadlineInput">
+<br>
 <button onclick="addTask()">Add Task</button>
 
 <div class="progress">
-<div id="progressBar" class="progress-bar">0%</div>
+<div class="progress-bar" id="progressBar"></div>
 </div>
 
-<ul id="taskList"></ul>
+<div id="taskList"></div>
 
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="screen">
-<div class="card">
-<h2>Profile</h2>
-<div id="profileInfo"></div>
-<button onclick="showMarks()">See Marks</button>
-<div id="marksArea"></div>
-<button onclick="showScreen('dashboard')">Back</button>
-</div>
-</div>
-
-<!-- MY DATES -->
-<div id="dates" class="screen">
-<div class="card">
-<h2>My Dates</h2>
-<input id="subj" placeholder="Subject">
-<input id="examDate" type="date">
-<input id="marks" placeholder="Marks">
-<button onclick="saveExam()">Save</button>
-<button onclick="showScreen('dashboard')">Back</button>
-</div>
+<p>🔥 Streak: <span id="streakCount">0</span> days</p>
+<button onclick="updateStreak()">Update Streak</button>
+<br><br>
+<button onclick="logout()">Logout</button>
 </div>
 
 <script>
 
-/* SCREEN SWITCH */
-function showScreen(id){
-document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
+/* ---------- MOTIVATION ---------- */
+const quotes=[
+"Focus & Win.",
+"Small progress is still progress.",
+"Discipline beats motivation.",
+"Consistency creates success.",
+"You are capable of amazing things."
+];
 
-/* REGISTER */
+/* ---------- REGISTER ---------- */
 function register(){
+let user=regUser.value;
+let pass=regPass.value;
+let age=regAge.value;
+let gender=regGender.value;
+let study=regStudy.value;
+
+if(!user||!pass){ alert("Fill required fields"); return; }
+
 let data={
-username:regUser.value,
-password:regPass.value,
-age:regAge.value,
-gender:regGender.value,
-study:regStudy.value
+user:user,
+pass:pass,
+age:age,
+gender:gender,
+study:study,
+tasks:[],
+streak:0,
+lastStreakDate:null
 };
-if(!data.username||!data.password||!data.age||!data.gender||!data.study){
-alert("Fill all fields");
-return;
-}
-localStorage.setItem("profile",JSON.stringify(data));
-alert("Registered!");
-showScreen("login");
+
+localStorage.setItem("padiUser",JSON.stringify(data));
+alert("Registered successfully!");
+showLogin();
 }
 
-/* LOGIN */
+/* ---------- LOGIN ---------- */
 function login(){
-let p=JSON.parse(localStorage.getItem("profile"));
-if(p && loginUser.value===p.username && loginPass.value===p.password){
-localStorage.setItem("logged","yes");
-loadDashboard();
+let user=loginUser.value;
+let pass=loginPass.value;
+
+let saved=JSON.parse(localStorage.getItem("padiUser"));
+if(!saved){ alert("No account found"); return; }
+
+if(user===saved.user && pass===saved.pass){
+registerBox.classList.add("hidden");
+loginBox.classList.add("hidden");
+dashboard.classList.remove("hidden");
+
+welcomeText.innerText="Welcome "+saved.user;
+quoteText.innerText=quotes[Math.floor(Math.random()*quotes.length)];
+loadTasks();
+streakCount.innerText=saved.streak;
 }else{
 alert("Wrong credentials");
 }
 }
 
-function loadDashboard(){
-showScreen("dashboard");
-let p=JSON.parse(localStorage.getItem("profile"));
-welcome.innerText="Welcome "+p.username;
-let quotes=["Stay strong.","You can do it.","One step at a time.","Focus & Win."];
-quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
-loadTasks();
+/* ---------- SWITCH ---------- */
+function showLogin(){
+registerBox.classList.add("hidden");
+loginBox.classList.remove("hidden");
+}
+function showRegister(){
+loginBox.classList.add("hidden");
+registerBox.classList.remove("hidden");
 }
 
-/* TASK SYSTEM */
+/* ---------- ADD TASK ---------- */
 function addTask(){
-let text=taskInput.value.trim();
-if(!text) return;
+let text=taskInput.value;
+if(!text){ alert("Enter task"); return; }
 
-let deadline=prompt("Enter deadline (YYYY-MM-DD)");
+let deadline=deadlineInput.value||"No deadline";
 let today=new Date().toLocaleDateString();
 
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.push({text,created:today,deadline,done:false});
-localStorage.setItem("tasks",JSON.stringify(tasks));
-taskInput.value="";
-loadTasks();
-}
-
-function loadTasks(){
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-taskList.innerHTML="";
-let done=0;
-
-tasks.forEach((t,i)=>{
-let li=document.createElement("li");
-
-let span=document.createElement("span");
-span.innerHTML=t.text+"<br><small>📅 "+t.created+" | ⏳ "+(t.deadline||"No deadline")+"</small>";
-
-if(t.done){span.style.textDecoration="line-through";done++;}
-
-let check=document.createElement("input");
-check.type="checkbox";
-check.checked=t.done;
-check.onchange=function(){
-t.done=!t.done;
-localStorage.setItem("tasks",JSON.stringify(tasks));
-if(t.done) alert("Great job! Keep going 🚀");
-loadTasks();
-};
-
-li.appendChild(span);
-li.appendChild(check);
-taskList.appendChild(li);
+let data=JSON.parse(localStorage.getItem("padiUser"));
+data.tasks.push({
+text:text,
+created:today,
+deadline:deadline,
+done:false
 });
 
-let percent=tasks.length?Math.round((done/tasks.length)*100):0;
-progressBar.style.width=percent+"%";
-progressBar.innerText=percent+"%";
+localStorage.setItem("padiUser",JSON.stringify(data));
+taskInput.value="";
+deadlineInput.value="";
+loadTasks();
 }
 
-/* STREAK */
+/* ---------- LOAD TASKS ---------- */
+function loadTasks(){
+let data=JSON.parse(localStorage.getItem("padiUser"));
+let list=document.getElementById("taskList");
+list.innerHTML="";
+
+data.tasks=data.tasks.filter(t=>t && t.text && t.created);
+localStorage.setItem("padiUser",JSON.stringify(data));
+
+let completed=0;
+
+data.tasks.forEach((t,i)=>{
+let div=document.createElement("div");
+div.className="task";
+
+let info=document.createElement("div");
+info.innerHTML=
+"<b>"+t.text+"</b><br>"+
+"<small>📅 "+t.created+" | ⏳ "+t.deadline+"</small>";
+
+let checkbox=document.createElement("input");
+checkbox.type="checkbox";
+checkbox.checked=t.done;
+checkbox.onchange=function(){
+data.tasks[i].done=this.checked;
+localStorage.setItem("padiUser",JSON.stringify(data));
+loadTasks();
+if(this.checked){
+alert("Great job! Keep going! 🚀");
+}
+};
+
+div.appendChild(info);
+div.appendChild(checkbox);
+list.appendChild(div);
+
+if(t.done) completed++;
+});
+
+let percent=data.tasks.length?
+(completed/data.tasks.length)*100:0;
+
+progressBar.style.width=percent+"%";
+}
+
+/* ---------- STREAK ---------- */
 function updateStreak(){
+let data=JSON.parse(localStorage.getItem("padiUser"));
 let today=new Date().toDateString();
-let last=localStorage.getItem("last");
-if(last===today){alert("Already updated today!");return;}
-let s=parseInt(localStorage.getItem("streak")||0);
-s++;
-localStorage.setItem("streak",s);
-localStorage.setItem("last",today);
+
+if(data.lastStreakDate===today){
+alert("Already updated today!");
+return;
+}
+
+data.streak+=1;
+data.lastStreakDate=today;
+
+localStorage.setItem("padiUser",JSON.stringify(data));
+streakCount.innerText=data.streak;
 alert("Streak updated! 🔥");
 }
 
-/* PROFILE */
-function openProfile(){
-showScreen("profile");
-let p=JSON.parse(localStorage.getItem("profile"));
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-profileInfo.innerHTML=
-"Username: "+p.username+"<br>"+
-"Age: "+p.age+"<br>"+
-"Gender: "+p.gender+"<br>"+
-"Study: "+p.study+"<br>"+
-"Total Tasks: "+tasks.length+"<br>"+
-"Streak: "+(localStorage.getItem("streak")||0)+" days";
-}
-
-function showMarks(){
-let exams=JSON.parse(localStorage.getItem("exams"))||[];
-marksArea.innerHTML=exams.map(e=>e.subject+" - "+e.marks+" marks").join("<br>");
-}
-
-/* MY DATES */
-function openDates(){showScreen("dates");}
-
-function saveExam(){
-let exams=JSON.parse(localStorage.getItem("exams"))||[];
-exams.push({subject:subj.value,date:examDate.value,marks:marks.value});
-localStorage.setItem("exams",JSON.stringify(exams));
-alert("Saved! Keep pushing forward 💪");
-}
-
-/* MENU */
-function toggleMenu(){
-menu.style.display=menu.style.display==="flex"?"none":"flex";
-}
-
+/* ---------- LOGOUT ---------- */
 function logout(){
-localStorage.removeItem("logged");
-location.reload();
-}
-
-if(localStorage.getItem("logged")==="yes"){
-loadDashboard();
+dashboard.classList.add("hidden");
+loginBox.classList.remove("hidden");
 }
 
 </script>
+
 </body>
 </html>
