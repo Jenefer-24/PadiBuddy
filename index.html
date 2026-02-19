@@ -6,90 +6,55 @@
 
 <style>
 body{
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(-45deg,#0f172a,#1e1b4b,#312e81,#1e293b);
-  background-size:400% 400%;
-  animation:gradientMove 12s ease infinite;
-  color:white;
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(-45deg,#0f172a,#1e1b4b,#312e81,#1e293b);
+background-size:400% 400%;
+animation:gradientMove 12s ease infinite;
+color:white;
 }
 
 @keyframes gradientMove{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
 .hidden{display:none;}
 
 .section{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-}
-
-button{
-  padding:10px 20px;
-  border:none;
-  border-radius:8px;
-  background:linear-gradient(90deg,#6366f1,#8b5cf6);
-  color:white;
-  cursor:pointer;
-  margin-top:10px;
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
 }
 
 input{
-  padding:10px;
-  margin:8px;
-  border-radius:8px;
-  border:none;
-  width:250px;
+padding:10px;
+margin:5px;
+border-radius:6px;
+border:none;
 }
 
-.app{display:flex;}
-
-.sidebar{
-  width:220px;
-  height:100vh;
-  background:rgba(30,41,59,0.9);
-  padding:20px;
-}
-
-.sidebar button{
-  width:100%;
-  margin:10px 0;
-  background:rgba(255,255,255,0.1);
-}
-
-.main{
-  flex:1;
-  padding:40px;
+button{
+padding:10px 20px;
+margin:10px;
+border:none;
+border-radius:8px;
+background:linear-gradient(90deg,#6366f1,#8b5cf6);
+color:white;
+cursor:pointer;
 }
 
 .card{
-  background:rgba(255,255,255,0.08);
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
-}
-
-.progress-bar{
-  background:rgba(255,255,255,0.1);
-  height:20px;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.progress-fill{
-  height:100%;
-  background:linear-gradient(90deg,#6366f1,#8b5cf6);
-  width:0%;
-  text-align:center;
-  font-size:12px;
-  line-height:20px;
+background:rgba(255,255,255,0.08);
+padding:20px;
+border-radius:12px;
+margin:10px;
+width:300px;
 }
 </style>
 </head>
@@ -98,181 +63,155 @@ input{
 
 <!-- LANDING -->
 <div id="landing" class="section">
-  <h1 style="font-size:48px;">Welcome to PadiBuddy 🚀</h1>
-  <p>Your AI-powered study planner for smarter preparation.</p>
-  <button id="startBtn">Start Planning</button>
+<h1 style="font-size:45px;">Welcome to PadiBuddy 🚀</h1>
+<p>Your AI-powered study planner for smarter preparation.</p>
+<button onclick="showAuth()">Start Planning</button>
 </div>
 
 <!-- AUTH -->
 <div id="auth" class="section hidden">
-  <h2>Register / Login</h2>
-  <input id="username" placeholder="Username"><br>
-  <input id="password" type="password" placeholder="Password"><br>
-  <button id="registerBtn">Register</button>
-  <button id="loginBtn">Login</button>
+<h2>Login / Register</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<div>
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
 </div>
 
-<!-- APP -->
-<div id="app" class="app hidden">
+<p id="authMsg"></p>
 
-<div class="sidebar">
-<h2>PadiBuddy</h2>
-<button data-page="dashboard">Dashboard</button>
-<button data-page="planner">Planner</button>
-<button data-page="ai">AI Assistant</button>
-<button data-page="profile">Profile</button>
-<button id="logoutBtn">Logout</button>
+<button onclick="goBack()">Back</button>
 </div>
 
-<div class="main">
-
-<div id="dashboard" class="page">
-<h1 id="welcomeText"></h1>
+<!-- DASHBOARD -->
+<div id="dashboard" class="section hidden">
+<h2 id="welcomeText"></h2>
 
 <div class="card">
-<p>Total Tasks: <span id="totalTasks">0</span></p>
-<p>Completed: <span id="completedTasks">0</span></p>
-</div>
-
-<div class="card">
-<div class="progress-bar">
-<div id="progressFill" class="progress-fill">0%</div>
-</div>
-</div>
-
-<div class="card">
-<p>Streak 🔥 <span id="streakCount">1</span> days</p>
-</div>
-
-</div>
-
-<div id="planner" class="page hidden">
+<h3>Add Study Task</h3>
 <input id="taskInput" placeholder="Enter task">
-<button id="addTaskBtn">Add</button>
+<button onclick="addTask()">Add</button>
+</div>
+
+<div class="card">
+<h3>Your Tasks</h3>
 <ul id="taskList"></ul>
 </div>
 
-<div id="ai" class="page hidden">
-<input id="aiInput" placeholder="Ask something">
-<button id="aiBtn">Ask</button>
-<div id="aiOutput"></div>
+<div class="card">
+<h3>Study Streak 🔥</h3>
+<p id="streakCount"></p>
+<button onclick="updateStreak()">Mark Today Studied</button>
 </div>
 
-<div id="profile" class="page hidden">
-<p>Username: <span id="profileName"></span></p>
-</div>
-
-</div>
+<button onclick="logout()">Logout</button>
 </div>
 
 <script>
 
-const landing=document.getElementById("landing");
-const auth=document.getElementById("auth");
-const app=document.getElementById("app");
-
-document.getElementById("startBtn").addEventListener("click",()=>{
-landing.classList.add("hidden");
-auth.classList.remove("hidden");
-});
-
-document.getElementById("registerBtn").addEventListener("click",()=>{
-localStorage.setItem("username",username.value);
-localStorage.setItem("password",password.value);
-alert("Registered!");
-});
-
-document.getElementById("loginBtn").addEventListener("click",()=>{
-if(username.value===localStorage.getItem("username") &&
-password.value===localStorage.getItem("password")){
-localStorage.setItem("loggedIn","true");
-openApp();
-}else alert("Invalid credentials");
-});
-
-function openApp(){
-auth.classList.add("hidden");
-landing.classList.add("hidden");
-app.classList.remove("hidden");
-welcomeText.innerText="Hello, "+localStorage.getItem("username")+" 👋";
-profileName.innerText=localStorage.getItem("username");
-renderTasks();
-updateStreak();
+function showAuth(){
+document.getElementById("landing").classList.add("hidden");
+document.getElementById("auth").classList.remove("hidden");
 }
 
-document.getElementById("logoutBtn").addEventListener("click",()=>{
-localStorage.removeItem("loggedIn");
+function goBack(){
+document.getElementById("auth").classList.add("hidden");
+document.getElementById("landing").classList.remove("hidden");
+}
+
+function register(){
+let email=document.getElementById("email").value;
+let password=document.getElementById("password").value;
+
+if(email===""||password===""){
+document.getElementById("authMsg").innerText="Fill all fields.";
+return;
+}
+
+localStorage.setItem("userEmail",email);
+localStorage.setItem("userPassword",password);
+
+document.getElementById("authMsg").innerText="Registered successfully! Now login.";
+}
+
+function login(){
+let email=document.getElementById("email").value;
+let password=document.getElementById("password").value;
+
+let savedEmail=localStorage.getItem("userEmail");
+let savedPassword=localStorage.getItem("userPassword");
+
+if(email===savedEmail && password===savedPassword){
+localStorage.setItem("loggedIn","true");
+openDashboard();
+}else{
+document.getElementById("authMsg").innerText="Invalid credentials.";
+}
+}
+
+function openDashboard(){
+document.getElementById("auth").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+
+let email=localStorage.getItem("userEmail");
+document.getElementById("welcomeText").innerText="Welcome "+email;
+
+loadTasks();
+loadStreak();
+}
+
+function logout(){
+localStorage.setItem("loggedIn","false");
 location.reload();
-});
+}
 
-window.onload=()=>{
-if(localStorage.getItem("loggedIn")==="true") openApp();
-};
-
-document.querySelectorAll("[data-page]").forEach(btn=>{
-btn.addEventListener("click",()=>{
-document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-document.getElementById(btn.dataset.page).classList.remove("hidden");
-});
-});
+function addTask(){
+let task=document.getElementById("taskInput").value;
+if(task==="") return;
 
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-
-document.getElementById("addTaskBtn").addEventListener("click",()=>{
-if(taskInput.value==="") return;
-tasks.push({name:taskInput.value,done:false});
+tasks.push(task);
 localStorage.setItem("tasks",JSON.stringify(tasks));
-taskInput.value="";
-renderTasks();
-});
+document.getElementById("taskInput").value="";
+loadTasks();
+}
 
-function renderTasks(){
-taskList.innerHTML="";
-let completed=0;
-tasks.forEach((t,i)=>{
+function loadTasks(){
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+let list=document.getElementById("taskList");
+list.innerHTML="";
+
+tasks.forEach((task,index)=>{
 let li=document.createElement("li");
-let checkbox=document.createElement("input");
-checkbox.type="checkbox";
-checkbox.checked=t.done;
-checkbox.addEventListener("change",()=>{
-tasks[i].done=!tasks[i].done;
+li.innerHTML=task+" <button onclick='deleteTask("+index+")'>✔</button>";
+list.appendChild(li);
+});
+}
+
+function deleteTask(index){
+let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+tasks.splice(index,1);
 localStorage.setItem("tasks",JSON.stringify(tasks));
-renderTasks();
-});
-li.appendChild(checkbox);
-li.append(" "+t.name);
-taskList.appendChild(li);
-if(t.done) completed++;
-});
-totalTasks.innerText=tasks.length;
-completedTasks.innerText=completed;
-let percent=tasks.length?Math.round((completed/tasks.length)*100):0;
-progressFill.style.width=percent+"%";
-progressFill.innerText=percent+"%";
+loadTasks();
 }
 
 function updateStreak(){
-let today=new Date().toDateString();
-let last=localStorage.getItem("lastVisit");
-let streak=parseInt(localStorage.getItem("streak")||1);
-if(last!==today){
+let streak=parseInt(localStorage.getItem("streak"))||0;
 streak++;
 localStorage.setItem("streak",streak);
-localStorage.setItem("lastVisit",today);
-}
-streakCount.innerText=streak;
+loadStreak();
 }
 
-document.getElementById("aiBtn").addEventListener("click",()=>{
-let q=aiInput.value.toLowerCase();
-let r="Stay consistent and revise daily.";
-if(q.includes("exam")) r="Create 7-day revision plan.";
-if(q.includes("productivity")) r="Use Pomodoro technique.";
-if(q.includes("weak")) r="Focus 30 mins extra daily.";
-aiOutput.innerHTML="<p><b>AI:</b> "+r+"</p>";
-});
+function loadStreak(){
+let streak=parseInt(localStorage.getItem("streak"))||0;
+document.getElementById("streakCount").innerText=streak+" days";
+}
 
-renderTasks();
+if(localStorage.getItem("loggedIn")==="true"){
+openDashboard();
+}
 
 </script>
 
