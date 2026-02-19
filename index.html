@@ -5,22 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{box-sizing:border-box;}
+
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
+overflow:hidden;
+color:white;
 background:linear-gradient(-45deg,#0f172a,#1e1b4b,#312e81,#1e293b);
 background-size:400% 400%;
-animation:gradientMove 12s ease infinite;
-color:white;
-overflow:hidden;
+animation:gradientMove 15s ease infinite;
 }
 
+/* Animated gradient */
 @keyframes gradientMove{
 0%{background-position:0% 50%;}
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
 }
 
+/* Floating glow circles */
+body::before, body::after{
+content:"";
+position:absolute;
+width:400px;
+height:400px;
+border-radius:50%;
+background:radial-gradient(circle,rgba(139,92,246,0.4),transparent);
+filter:blur(80px);
+z-index:0;
+animation:float 10s ease-in-out infinite alternate;
+}
+
+body::before{top:-100px;left:-100px;}
+body::after{bottom:-100px;right:-100px;}
+
+@keyframes float{
+0%{transform:translateY(0px);}
+100%{transform:translateY(40px);}
+}
+
+/* Screen system */
 .screen{
 position:absolute;
 top:0;
@@ -32,7 +57,9 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-transition:0.4s;
+transition:0.4s ease;
+z-index:1;
+padding:20px;
 }
 
 .hidden{
@@ -40,21 +67,56 @@ opacity:0;
 pointer-events:none;
 }
 
+/* Glass card */
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:15px;
+width:320px;
+box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+
+/* Inputs */
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+background:rgba(255,255,255,0.1);
+color:white;
+}
+
+/* Buttons */
 button{
 padding:10px 20px;
-margin:10px;
+margin-top:10px;
 border:none;
 border-radius:8px;
 background:linear-gradient(90deg,#6366f1,#8b5cf6);
 color:white;
 cursor:pointer;
+transition:0.3s;
 }
 
-input{
-padding:10px;
-margin:5px;
+button:hover{
+transform:scale(1.05);
+}
+
+/* Dashboard task list */
+ul{
+list-style:none;
+padding:0;
+margin-top:15px;
+text-align:left;
+}
+
+li{
+background:rgba(255,255,255,0.1);
+padding:8px;
 border-radius:6px;
-border:none;
+margin:5px 0;
 }
 </style>
 </head>
@@ -63,81 +125,78 @@ border:none;
 
 <!-- LANDING -->
 <div id="landing" class="screen">
-<h1 style="font-size:45px;">Welcome to PadiBuddy 🚀</h1>
-<p>Your AI-powered study planner.</p>
-<button onclick="goAuth()">Start Planning</button>
+<div class="card">
+<h1>Welcome to PadiBuddy 🚀</h1>
+<p>Your AI-powered study planner</p>
+<button onclick="showAuth()">Get Started</button>
+</div>
 </div>
 
 <!-- AUTH -->
 <div id="auth" class="screen hidden">
+<div class="card">
 <h2>Login / Register</h2>
-
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
-
-<div>
 <button onclick="register()">Register</button>
 <button onclick="login()">Login</button>
+<p id="msg"></p>
+<button onclick="backHome()">Back</button>
 </div>
-
-<p id="authMsg"></p>
-
-<button onclick="goLanding()">Back</button>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="screen hidden">
-<h2 id="welcomeText"></h2>
-
-<input id="taskInput" placeholder="Add task">
-<button onclick="addTask()">Add</button>
-
+<div class="card">
+<h2 id="welcome"></h2>
+<input id="taskInput" placeholder="Add study task">
+<button onclick="addTask()">Add Task</button>
 <ul id="taskList"></ul>
-
 <button onclick="logout()">Logout</button>
+</div>
 </div>
 
 <script>
 
-function goAuth(){
+function showAuth(){
 landing.classList.add("hidden");
 auth.classList.remove("hidden");
 }
 
-function goLanding(){
+function backHome(){
 auth.classList.add("hidden");
 landing.classList.remove("hidden");
 }
 
 function register(){
 if(email.value===""||password.value===""){
-authMsg.innerText="Fill all fields";
+msg.innerText="Fill all fields.";
 return;
 }
-localStorage.setItem("userEmail",email.value);
-localStorage.setItem("userPassword",password.value);
-authMsg.innerText="Registered! Now login.";
+localStorage.setItem("email",email.value);
+localStorage.setItem("password",password.value);
+msg.innerText="Registered! Now login.";
 }
 
 function login(){
-if(email.value===localStorage.getItem("userEmail") &&
-password.value===localStorage.getItem("userPassword")){
-localStorage.setItem("loggedIn","true");
+if(email.value===localStorage.getItem("email") &&
+password.value===localStorage.getItem("password")){
+localStorage.setItem("logged","true");
 openDashboard();
 }else{
-authMsg.innerText="Invalid credentials";
+msg.innerText="Invalid credentials.";
 }
 }
 
 function openDashboard(){
 auth.classList.add("hidden");
 dashboard.classList.remove("hidden");
-welcomeText.innerText="Welcome "+localStorage.getItem("userEmail");
+welcome.innerText="Hello "+localStorage.getItem("email");
 loadTasks();
 }
 
 function logout(){
-localStorage.setItem("loggedIn","false");
+localStorage.setItem("logged","false");
 location.reload();
 }
 
@@ -160,7 +219,7 @@ taskList.appendChild(li);
 });
 }
 
-if(localStorage.getItem("loggedIn")==="true"){
+if(localStorage.getItem("logged")==="true"){
 openDashboard();
 }
 
