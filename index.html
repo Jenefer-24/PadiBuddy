@@ -8,40 +8,62 @@
 
 <body>
 
-<!-- REGISTER -->
+<!-- REGISTER SCREEN -->
 <div class="screen active" id="register">
 <h2>Register</h2>
+
 <input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
 <input id="age" type="number" placeholder="Age">
+
 <select id="gender">
+<option value="">Select Gender</option>
 <option>Male</option>
 <option>Female</option>
 </select>
+
 <select id="study">
+<option value="">What are you studying?</option>
 <option>School</option>
 <option>College</option>
 <option>Special Course</option>
 </select>
+
 <button onclick="register()">Register</button>
-<p>Already registered? <button onclick="switchScreen('login')">Login</button></p>
+
+<p style="margin-top:10px;">
+Already have an account?
+<button onclick="switchScreen('login')">Login</button>
+</p>
+
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN SCREEN -->
 <div class="screen" id="login">
 <h2>Login</h2>
+
 <input id="loginUser" placeholder="Username">
+<input id="loginPass" type="password" placeholder="Password">
+
 <button onclick="login()">Login</button>
-<p>No account? <button onclick="switchScreen('register')">Register</button></p>
+
+<p style="margin-top:10px;">
+No account?
+<button onclick="switchScreen('register')">Register</button>
+</p>
+
 </div>
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD SCREEN -->
 <div class="screen" id="dashboard">
 
+<!-- 3 DOT MENU BUTTON -->
 <div class="menu-btn" onclick="toggleMenu()">⋮</div>
 
+<!-- SIDE MENU (Hidden by default) -->
 <div class="side-menu" id="sideMenu">
 <button onclick="toggleMenu()">Close</button>
-<button onclick="alert(JSON.stringify(JSON.parse(localStorage.getItem('profile')),null,2))">Profile</button>
+<button onclick="showProfile()">Profile</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -57,7 +79,7 @@
 <div class="progress-bar" id="progressBar"></div>
 </div>
 
-<h3>🔥 Study Streak</h3>
+<h3 style="margin-top:20px;">🔥 Study Streak</h3>
 <p id="streakText"></p>
 <button onclick="markStudied()">Mark Today Studied</button>
 
