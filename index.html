@@ -12,6 +12,7 @@ background:linear-gradient(-45deg,#0f172a,#1e1b4b,#312e81,#1e293b);
 background-size:400% 400%;
 animation:gradientMove 12s ease infinite;
 color:white;
+overflow:hidden;
 }
 
 @keyframes gradientMove{
@@ -20,23 +21,23 @@ color:white;
 100%{background-position:0% 50%;}
 }
 
-.hidden{display:none;}
-
-.section{
+.screen{
+position:absolute;
+top:0;
+left:0;
+width:100%;
 height:100vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-padding:20px;
+transition:0.4s;
 }
 
-input{
-padding:10px;
-margin:5px;
-border-radius:6px;
-border:none;
+.hidden{
+opacity:0;
+pointer-events:none;
 }
 
 button{
@@ -49,12 +50,11 @@ color:white;
 cursor:pointer;
 }
 
-.card{
-background:rgba(255,255,255,0.08);
-padding:20px;
-border-radius:12px;
-margin:10px;
-width:300px;
+input{
+padding:10px;
+margin:5px;
+border-radius:6px;
+border:none;
 }
 </style>
 </head>
@@ -62,14 +62,14 @@ width:300px;
 <body>
 
 <!-- LANDING -->
-<div id="landing" class="section">
+<div id="landing" class="screen">
 <h1 style="font-size:45px;">Welcome to PadiBuddy 🚀</h1>
-<p>Your AI-powered study planner for smarter preparation.</p>
-<button onclick="showAuth()">Start Planning</button>
+<p>Your AI-powered study planner.</p>
+<button onclick="goAuth()">Start Planning</button>
 </div>
 
 <!-- AUTH -->
-<div id="auth" class="section hidden">
+<div id="auth" class="screen hidden">
 <h2>Login / Register</h2>
 
 <input id="email" placeholder="Email">
@@ -82,84 +82,58 @@ width:300px;
 
 <p id="authMsg"></p>
 
-<button onclick="goBack()">Back</button>
+<button onclick="goLanding()">Back</button>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="section hidden">
+<div id="dashboard" class="screen hidden">
 <h2 id="welcomeText"></h2>
 
-<div class="card">
-<h3>Add Study Task</h3>
-<input id="taskInput" placeholder="Enter task">
+<input id="taskInput" placeholder="Add task">
 <button onclick="addTask()">Add</button>
-</div>
 
-<div class="card">
-<h3>Your Tasks</h3>
 <ul id="taskList"></ul>
-</div>
-
-<div class="card">
-<h3>Study Streak 🔥</h3>
-<p id="streakCount"></p>
-<button onclick="updateStreak()">Mark Today Studied</button>
-</div>
 
 <button onclick="logout()">Logout</button>
 </div>
 
 <script>
 
-function showAuth(){
-document.getElementById("landing").classList.add("hidden");
-document.getElementById("auth").classList.remove("hidden");
+function goAuth(){
+landing.classList.add("hidden");
+auth.classList.remove("hidden");
 }
 
-function goBack(){
-document.getElementById("auth").classList.add("hidden");
-document.getElementById("landing").classList.remove("hidden");
+function goLanding(){
+auth.classList.add("hidden");
+landing.classList.remove("hidden");
 }
 
 function register(){
-let email=document.getElementById("email").value;
-let password=document.getElementById("password").value;
-
-if(email===""||password===""){
-document.getElementById("authMsg").innerText="Fill all fields.";
+if(email.value===""||password.value===""){
+authMsg.innerText="Fill all fields";
 return;
 }
-
-localStorage.setItem("userEmail",email);
-localStorage.setItem("userPassword",password);
-
-document.getElementById("authMsg").innerText="Registered successfully! Now login.";
+localStorage.setItem("userEmail",email.value);
+localStorage.setItem("userPassword",password.value);
+authMsg.innerText="Registered! Now login.";
 }
 
 function login(){
-let email=document.getElementById("email").value;
-let password=document.getElementById("password").value;
-
-let savedEmail=localStorage.getItem("userEmail");
-let savedPassword=localStorage.getItem("userPassword");
-
-if(email===savedEmail && password===savedPassword){
+if(email.value===localStorage.getItem("userEmail") &&
+password.value===localStorage.getItem("userPassword")){
 localStorage.setItem("loggedIn","true");
 openDashboard();
 }else{
-document.getElementById("authMsg").innerText="Invalid credentials.";
+authMsg.innerText="Invalid credentials";
 }
 }
 
 function openDashboard(){
-document.getElementById("auth").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-
-let email=localStorage.getItem("userEmail");
-document.getElementById("welcomeText").innerText="Welcome "+email;
-
+auth.classList.add("hidden");
+dashboard.classList.remove("hidden");
+welcomeText.innerText="Welcome "+localStorage.getItem("userEmail");
 loadTasks();
-loadStreak();
 }
 
 function logout(){
@@ -168,45 +142,22 @@ location.reload();
 }
 
 function addTask(){
-let task=document.getElementById("taskInput").value;
-if(task==="") return;
-
+if(taskInput.value==="") return;
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.push(task);
+tasks.push(taskInput.value);
 localStorage.setItem("tasks",JSON.stringify(tasks));
-document.getElementById("taskInput").value="";
+taskInput.value="";
 loadTasks();
 }
 
 function loadTasks(){
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-let list=document.getElementById("taskList");
-list.innerHTML="";
-
-tasks.forEach((task,index)=>{
+taskList.innerHTML="";
+tasks.forEach(t=>{
 let li=document.createElement("li");
-li.innerHTML=task+" <button onclick='deleteTask("+index+")'>✔</button>";
-list.appendChild(li);
+li.innerText=t;
+taskList.appendChild(li);
 });
-}
-
-function deleteTask(index){
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.splice(index,1);
-localStorage.setItem("tasks",JSON.stringify(tasks));
-loadTasks();
-}
-
-function updateStreak(){
-let streak=parseInt(localStorage.getItem("streak"))||0;
-streak++;
-localStorage.setItem("streak",streak);
-loadStreak();
-}
-
-function loadStreak(){
-let streak=parseInt(localStorage.getItem("streak"))||0;
-document.getElementById("streakCount").innerText=streak+" days";
 }
 
 if(localStorage.getItem("loggedIn")==="true"){
