@@ -6,93 +6,142 @@
     body {
       margin: 0;
       font-family: Arial;
-      background: #0f172a;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: white;
       text-align: center;
-    }
-
-    header {
-      background: linear-gradient(90deg, #6366f1, #8b5cf6);
-      padding: 20px;
-      font-size: 28px;
-      font-weight: bold;
     }
 
     .container {
       padding: 40px;
     }
 
-    button {
-      padding: 10px 20px;
-      background: #6366f1;
-      border: none;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-top: 10px;
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 25px;
+      border-radius: 12px;
+      width: 320px;
+      margin: 40px auto;
     }
 
     input {
       padding: 10px;
-      margin: 5px;
+      width: 90%;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
     }
 
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      margin: 20px auto;
-      width: 300px;
-      border-radius: 10px;
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #6366f1;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #8b5cf6;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<header>PadiBuddy - AI Study Planner</header>
-
 <div class="container">
 
-  <div class="card">
-    <h3>Login</h3>
-    <input type="text" placeholder="Username"><br>
-    <input type="password" placeholder="Password"><br>
-    <button onclick="alert('Demo Login Successful')">Login</button>
+  <!-- REGISTER -->
+  <div id="registerCard" class="card">
+    <h2>Register</h2>
+    <input type="text" id="regUser" placeholder="Username">
+    <input type="password" id="regPass" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <p>Already have account? <a href="#" onclick="showLogin()">Login</a></p>
   </div>
 
-  <div class="card">
-    <h3>Study Planner</h3>
-    <input type="text" id="task" placeholder="Enter study task">
-    <button onclick="addTask()">Add</button>
-    <ul id="taskList"></ul>
+  <!-- LOGIN -->
+  <div id="loginCard" class="card hidden">
+    <h2>Login</h2>
+    <input type="text" id="loginUser" placeholder="Username">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p>No account? <a href="#" onclick="showRegister()">Register</a></p>
   </div>
 
-  <div class="card">
-    <h3>AI Assistant</h3>
-    <input type="text" id="aiInput" placeholder="Ask something...">
-    <button onclick="aiReply()">Ask</button>
-    <p id="aiOutput"></p>
+  <!-- PORTAL -->
+  <div id="portalCard" class="card hidden">
+    <h2>Welcome to PadiBuddy</h2>
+    <p id="welcomeText"></p>
+    <button onclick="logout()">Logout</button>
   </div>
 
 </div>
 
 <script>
-function addTask() {
-  let task = document.getElementById("task").value;
-  let li = document.createElement("li");
-  li.innerText = task;
-  document.getElementById("taskList").appendChild(li);
+function showLogin() {
+  document.getElementById("registerCard").classList.add("hidden");
+  document.getElementById("loginCard").classList.remove("hidden");
 }
 
-function aiReply() {
-  let question = document.getElementById("aiInput").value;
-  let reply = "Stay consistent and revise daily.";
+function showRegister() {
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("registerCard").classList.remove("hidden");
+}
 
-  if (question.toLowerCase().includes("exam")) {
-    reply = "Start revision 7 days before exam and practice mock tests.";
+function register() {
+  let user = document.getElementById("regUser").value;
+  let pass = document.getElementById("regPass").value;
+
+  if(user === "" || pass === "") {
+    alert("Please fill all fields");
+    return;
   }
 
-  document.getElementById("aiOutput").innerText = reply;
+  localStorage.setItem("username", user);
+  localStorage.setItem("password", pass);
+
+  alert("Registered Successfully!");
+  showLogin();
 }
+
+function login() {
+  let user = document.getElementById("loginUser").value;
+  let pass = document.getElementById("loginPass").value;
+
+  let savedUser = localStorage.getItem("username");
+  let savedPass = localStorage.getItem("password");
+
+  if(user === savedUser && pass === savedPass) {
+    localStorage.setItem("loggedIn", "true");
+    openPortal();
+  } else {
+    alert("Invalid credentials");
+  }
+}
+
+function openPortal() {
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("registerCard").classList.add("hidden");
+  document.getElementById("portalCard").classList.remove("hidden");
+
+  let user = localStorage.getItem("username");
+  document.getElementById("welcomeText").innerText = "Hello, " + user + " 👋";
+}
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  location.reload();
+}
+
+window.onload = function() {
+  if(localStorage.getItem("loggedIn") === "true") {
+    openPortal();
+  }
+};
 </script>
 
 </body>
