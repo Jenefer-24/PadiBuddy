@@ -13,6 +13,36 @@ color:white;
 text-align:center;
 }
 
+/* 3 DOT MENU */
+.menu-icon{
+position:absolute;
+top:15px;
+left:15px;
+font-size:24px;
+cursor:pointer;
+display:none;
+}
+
+.dropdown{
+position:absolute;
+top:50px;
+left:15px;
+background:white;
+color:black;
+border-radius:8px;
+padding:10px;
+display:none;
+width:150px;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.dropdown button{
+width:100%;
+margin:5px 0;
+background:#6c5ce7;
+color:white;
+}
+
 /* Card */
 .card{
 background:rgba(0,0,0,0.2);
@@ -84,6 +114,16 @@ text-align:left;
 
 <body>
 
+<!-- 3 DOT -->
+<div class="menu-icon" id="menuIcon" onclick="toggleMenu()">⋮</div>
+
+<div class="dropdown" id="dropdownMenu">
+<button onclick="showProfile()">Profile</button>
+<button onclick="alert('AI Assistance coming soon 🚀')">AI Assistance</button>
+<button onclick="alert('My Dates feature coming soon 📅')">My Dates</button>
+<button onclick="logout()">Logout</button>
+</div>
+
 <!-- REGISTER -->
 <div class="card" id="registerBox">
 <h2>Register</h2>
@@ -138,13 +178,11 @@ New user?
 
 <p>🔥 Streak: <span id="streakCount">0</span> days</p>
 <button onclick="updateStreak()">Update Streak</button>
-<br><br>
-<button onclick="logout()">Logout</button>
 </div>
 
 <script>
 
-/* ---------- MOTIVATION ---------- */
+/* Quotes */
 const quotes=[
 "Focus & Win.",
 "Small progress is still progress.",
@@ -153,7 +191,13 @@ const quotes=[
 "You are capable of amazing things."
 ];
 
-/* ---------- REGISTER ---------- */
+/* MENU */
+function toggleMenu(){
+let menu=document.getElementById("dropdownMenu");
+menu.style.display = menu.style.display==="block" ? "none" : "block";
+}
+
+/* REGISTER */
 function register(){
 let user=regUser.value;
 let pass=regPass.value;
@@ -179,7 +223,7 @@ alert("Registered successfully!");
 showLogin();
 }
 
-/* ---------- LOGIN ---------- */
+/* LOGIN */
 function login(){
 let user=loginUser.value;
 let pass=loginPass.value;
@@ -191,6 +235,7 @@ if(user===saved.user && pass===saved.pass){
 registerBox.classList.add("hidden");
 loginBox.classList.add("hidden");
 dashboard.classList.remove("hidden");
+menuIcon.style.display="block";
 
 welcomeText.innerText="Welcome "+saved.user;
 quoteText.innerText=quotes[Math.floor(Math.random()*quotes.length)];
@@ -201,7 +246,7 @@ alert("Wrong credentials");
 }
 }
 
-/* ---------- SWITCH ---------- */
+/* SWITCH */
 function showLogin(){
 registerBox.classList.add("hidden");
 loginBox.classList.remove("hidden");
@@ -211,7 +256,7 @@ loginBox.classList.add("hidden");
 registerBox.classList.remove("hidden");
 }
 
-/* ---------- ADD TASK ---------- */
+/* ADD TASK */
 function addTask(){
 let text=taskInput.value;
 if(!text){ alert("Enter task"); return; }
@@ -233,14 +278,11 @@ deadlineInput.value="";
 loadTasks();
 }
 
-/* ---------- LOAD TASKS ---------- */
+/* LOAD TASKS */
 function loadTasks(){
 let data=JSON.parse(localStorage.getItem("padiUser"));
 let list=document.getElementById("taskList");
 list.innerHTML="";
-
-data.tasks=data.tasks.filter(t=>t && t.text && t.created);
-localStorage.setItem("padiUser",JSON.stringify(data));
 
 let completed=0;
 
@@ -248,14 +290,14 @@ data.tasks.forEach((t,i)=>{
 let div=document.createElement("div");
 div.className="task";
 
-let info=document.createElement("div");
-info.innerHTML=
+div.innerHTML=
 "<b>"+t.text+"</b><br>"+
 "<small>📅 "+t.created+" | ⏳ "+t.deadline+"</small>";
 
 let checkbox=document.createElement("input");
 checkbox.type="checkbox";
 checkbox.checked=t.done;
+
 checkbox.onchange=function(){
 data.tasks[i].done=this.checked;
 localStorage.setItem("padiUser",JSON.stringify(data));
@@ -265,7 +307,6 @@ alert("Great job! Keep going! 🚀");
 }
 };
 
-div.appendChild(info);
 div.appendChild(checkbox);
 list.appendChild(div);
 
@@ -278,7 +319,7 @@ let percent=data.tasks.length?
 progressBar.style.width=percent+"%";
 }
 
-/* ---------- STREAK ---------- */
+/* STREAK */
 function updateStreak(){
 let data=JSON.parse(localStorage.getItem("padiUser"));
 let today=new Date().toDateString();
@@ -296,10 +337,24 @@ streakCount.innerText=data.streak;
 alert("Streak updated! 🔥");
 }
 
-/* ---------- LOGOUT ---------- */
+/* PROFILE */
+function showProfile(){
+let data=JSON.parse(localStorage.getItem("padiUser"));
+alert(
+"Username: "+data.user+
+"\nAge: "+data.age+
+"\nGender: "+data.gender+
+"\nStudying: "+data.study+
+"\nStreak: "+data.streak+" days"
+);
+}
+
+/* LOGOUT */
 function logout(){
 dashboard.classList.add("hidden");
 loginBox.classList.remove("hidden");
+menuIcon.style.display="none";
+dropdownMenu.style.display="none";
 }
 
 </script>
