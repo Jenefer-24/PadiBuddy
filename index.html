@@ -12,7 +12,6 @@ body {
   background-size: 400% 400%;
   animation: gradientMove 12s ease infinite;
   color: white;
-  overflow-x: hidden;
 }
 
 @keyframes gradientMove {
@@ -21,6 +20,9 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+.hidden { display: none; }
+
+/* Landing & Auth */
 .section {
   height: 100vh;
   display: flex;
@@ -28,35 +30,61 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
-}
-
-.hidden {
-  display: none;
-}
-
-button {
-  padding: 12px 25px;
-  background: linear-gradient(90deg,#6366f1,#8b5cf6);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
-  transition: 0.3s;
-}
-
-button:hover {
-  transform: scale(1.05);
 }
 
 input {
   padding: 10px;
-  margin: 10px;
+  margin: 8px;
   border-radius: 8px;
   border: none;
   width: 250px;
+}
+
+button {
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#6366f1,#8b5cf6);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+button:hover { transform: scale(1.05); }
+
+/* App Layout */
+.app {
+  display: flex;
+}
+
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: rgba(30,41,59,0.8);
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+}
+
+.sidebar button {
+  width: 100%;
+  margin: 10px 0;
+  background: rgba(255,255,255,0.1);
+}
+
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
 </style>
 </head>
@@ -65,60 +93,100 @@ input {
 
 <!-- LANDING -->
 <div id="landing" class="section">
-  <h1 style="font-size: 48px;">Welcome to PadiBuddy 🚀</h1>
-  <p style="max-width:600px;">
-    Your AI-powered study companion that helps you track goals, improve productivity,
-    manage tasks, and prepare smarter for exams.
-  </p>
+  <h1 style="font-size:48px;">Welcome to PadiBuddy 🚀</h1>
+  <p>Your AI-powered study planner to boost productivity and exam performance.</p>
   <button onclick="showAuth()">Start Planning</button>
 </div>
 
 <!-- AUTH -->
 <div id="auth" class="section hidden">
-  <h2>Login or Register</h2>
-
+  <h2>Login / Register</h2>
   <input type="text" id="username" placeholder="Username"><br>
   <input type="password" id="password" placeholder="Password"><br>
-
   <button onclick="register()">Register</button>
   <button onclick="login()">Login</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="section hidden">
-  <h1 id="welcomeText"></h1>
-  <p>Welcome to your study portal.</p>
-  <button onclick="logout()">Logout</button>
+<!-- APP -->
+<div id="app" class="app hidden">
+
+  <div class="sidebar">
+    <h2>PadiBuddy</h2>
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('planner')">Planner</button>
+    <button onclick="showSection('ai')">AI Assistant</button>
+    <button onclick="showSection('profile')">Profile</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="page">
+      <h1 id="welcomeText"></h1>
+      <div class="card">
+        <h3>Study Summary</h3>
+        <p>Total Tasks: <span id="totalTasks">0</span></p>
+        <p>Completed Tasks: <span id="completedTasks">0</span></p>
+      </div>
+    </div>
+
+    <!-- Planner -->
+    <div id="planner" class="page hidden">
+      <h2>Study Planner</h2>
+      <input type="text" id="taskInput" placeholder="Enter task">
+      <button onclick="addTask()">Add</button>
+      <ul id="taskList"></ul>
+    </div>
+
+    <!-- AI -->
+    <div id="ai" class="page hidden">
+      <h2>AI Assistant</h2>
+      <input type="text" id="aiInput" placeholder="Ask about exam or productivity">
+      <button onclick="aiReply()">Ask</button>
+      <div id="aiOutput"></div>
+    </div>
+
+    <!-- Profile -->
+    <div id="profile" class="page hidden">
+      <h2>Profile</h2>
+      <p>Username: <span id="profileName"></span></p>
+    </div>
+
+  </div>
 </div>
 
 <script>
 
+/* AUTH */
 function showAuth(){
-  document.getElementById("landing").classList.add("hidden");
-  document.getElementById("auth").classList.remove("hidden");
+  landing.classList.add("hidden");
+  auth.classList.remove("hidden");
 }
 
 function register(){
   localStorage.setItem("username", username.value);
   localStorage.setItem("password", password.value);
-  alert("Registered successfully!");
+  alert("Registered!");
 }
 
 function login(){
   if(username.value === localStorage.getItem("username") &&
      password.value === localStorage.getItem("password")){
       localStorage.setItem("loggedIn","true");
-      openDashboard();
+      openApp();
   } else {
     alert("Invalid credentials");
   }
 }
 
-function openDashboard(){
-  document.getElementById("auth").classList.add("hidden");
-  document.getElementById("landing").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
+function openApp(){
+  auth.classList.add("hidden");
+  landing.classList.add("hidden");
+  app.classList.remove("hidden");
   welcomeText.innerText = "Hello, " + localStorage.getItem("username") + " 👋";
+  profileName.innerText = localStorage.getItem("username");
+  renderTasks();
 }
 
 function logout(){
@@ -128,8 +196,56 @@ function logout(){
 
 window.onload = function(){
   if(localStorage.getItem("loggedIn")==="true"){
-    openDashboard();
+    openApp();
   }
+}
+
+/* NAVIGATION */
+function showSection(section){
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(section).classList.remove("hidden");
+}
+
+/* PLANNER */
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function addTask(){
+  let task = taskInput.value;
+  tasks.push({name:task, done:false});
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  taskInput.value="";
+  renderTasks();
+}
+
+function renderTasks(){
+  taskList.innerHTML="";
+  let completed=0;
+  tasks.forEach((t,i)=>{
+    let li=document.createElement("li");
+    li.innerHTML = `<input type="checkbox" ${t.done?"checked":""} onchange="toggleTask(${i})"> ${t.name}`;
+    taskList.appendChild(li);
+    if(t.done) completed++;
+  });
+  totalTasks.innerText = tasks.length;
+  completedTasks.innerText = completed;
+}
+
+function toggleTask(i){
+  tasks[i].done = !tasks[i].done;
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  renderTasks();
+}
+
+/* AI */
+function aiReply(){
+  let q = aiInput.value.toLowerCase();
+  let r = "Stay consistent and revise daily.";
+
+  if(q.includes("exam")) r="Create a 7-day revision plan and practice mock tests.";
+  if(q.includes("productivity")) r="Use Pomodoro technique: 25 mins focus, 5 mins break.";
+  if(q.includes("weak")) r="Focus 30 extra minutes daily on weak subjects.";
+
+  aiOutput.innerHTML = "<p><b>AI:</b> "+r+"</p>";
 }
 
 </script>
