@@ -5,10 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
+*{
+box-sizing:border-box;
 margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#4e73df,#1cc88a);
+padding:0;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#4e73df,#764ba2);
 min-height:100vh;
 display:flex;
 justify-content:center;
@@ -16,133 +21,182 @@ align-items:center;
 color:white;
 }
 
-.container{
-width:380px;
+.screen{
+width:100%;
+max-width:520px;
 background:rgba(0,0,0,0.35);
-padding:25px;
-border-radius:15px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
+padding:30px;
+border-radius:18px;
+box-shadow:0 15px 40px rgba(0,0,0,0.4);
 text-align:center;
+display:none;
 }
 
-h1,h2{margin:10px 0;}
+.screen.active{
+display:block;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+h2{
+margin-bottom:15px;
+}
+
+p{
+margin-bottom:10px;
+opacity:0.9;
+}
 
 input{
 width:100%;
-padding:8px;
-margin:6px 0;
+padding:10px;
+margin:8px 0;
 border:none;
-border-radius:6px;
+border-radius:8px;
+outline:none;
 }
 
 button{
-padding:8px 15px;
-margin-top:8px;
+padding:10px 20px;
+margin-top:10px;
 border:none;
-border-radius:6px;
+border-radius:8px;
 background:white;
-color:#1cc88a;
+color:#764ba2;
 font-weight:bold;
 cursor:pointer;
+transition:0.2s;
 }
 
-.hidden{display:none;}
+button:hover{
+transform:scale(1.05);
+}
+
+.section-title{
+margin-top:20px;
+margin-bottom:10px;
+font-size:18px;
+font-weight:bold;
+}
 
 ul{
-text-align:left;
-padding-left:15px;
+list-style:none;
 margin-top:10px;
+text-align:left;
 }
 
 li{
-margin:5px 0;
+background:rgba(255,255,255,0.15);
+padding:8px;
+border-radius:6px;
+margin:6px 0;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-.progress{
-background:rgba(255,255,255,0.3);
-border-radius:6px;
-overflow:hidden;
+.progress-container{
+background:rgba(255,255,255,0.2);
+border-radius:10px;
 height:15px;
 margin-top:10px;
+overflow:hidden;
 }
 
 .progress-bar{
 height:100%;
 background:#00ffcc;
 width:0%;
+transition:0.3s;
+}
+
+.small{
+font-size:14px;
+opacity:0.8;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container" id="landing">
-<h1>PadiBuddy 📚</h1>
+<!-- LANDING -->
+<div class="screen active" id="landing">
+<h1>PadiBuddy 🚀</h1>
 <p>Your Personal Study Planner</p>
 <button onclick="showAuth()">Get Started</button>
 </div>
 
-<div class="container hidden" id="auth">
+<!-- AUTH -->
+<div class="screen" id="auth">
 <h2>Login / Register</h2>
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 <button onclick="register()">Register</button>
 <button onclick="login()">Login</button>
-<p id="msg"></p>
-<button onclick="backHome()">Back</button>
+<p id="authMsg" class="small"></p>
+<button onclick="goLanding()">Back</button>
 </div>
 
-<div class="container hidden" id="dashboard">
+<!-- DASHBOARD -->
+<div class="screen" id="dashboard">
 
-<h2 id="welcome"></h2>
-<p id="todayDate"></p>
+<h2 id="welcomeText"></h2>
+<p id="todayDate" class="small"></p>
 
-<h3>🎯 Study Goal</h3>
+<div class="section-title">🎯 Today's Goal</div>
 <input id="goalInput" placeholder="Enter today's goal">
 <button onclick="saveGoal()">Save Goal</button>
-<p id="savedGoal"></p>
+<p id="goalDisplay" class="small"></p>
 
-<h3>📚 Add Study Task</h3>
+<div class="section-title">📚 Add Study Task</div>
 <input id="subjectInput" placeholder="Subject">
 <input id="taskInput" placeholder="Task description">
 <button onclick="addTask()">Add Task</button>
 
 <ul id="taskList"></ul>
 
-<h3>📊 Progress</h3>
-<div class="progress">
+<div class="section-title">📊 Progress</div>
+<div class="progress-container">
 <div class="progress-bar" id="progressBar"></div>
 </div>
-<p id="progressText"></p>
+<p id="progressText" class="small"></p>
 
-<h3>🔥 Study Streak</h3>
+<div class="section-title">🔥 Study Streak</div>
 <p id="streakText"></p>
 <button onclick="markStudied()">Mark Today Studied</button>
 
+<br><br>
 <button onclick="logout()">Logout</button>
 
 </div>
 
 <script>
 
-function showAuth(){
-landing.classList.add("hidden");
-auth.classList.remove("hidden");
+function switchScreen(id){
+document.querySelectorAll('.screen').forEach(screen=>{
+screen.classList.remove('active');
+});
+document.getElementById(id).classList.add('active');
 }
 
-function backHome(){
-auth.classList.add("hidden");
-landing.classList.remove("hidden");
+function showAuth(){
+switchScreen('auth');
+}
+
+function goLanding(){
+switchScreen('landing');
 }
 
 function register(){
-if(email.value===""||password.value===""){
-msg.innerText="Fill all fields";
+if(email.value==="" || password.value===""){
+authMsg.innerText="Fill all fields.";
 return;
 }
 localStorage.setItem("email",email.value);
 localStorage.setItem("password",password.value);
-msg.innerText="Registered! Now login.";
+authMsg.innerText="Registered successfully! Now login.";
 }
 
 function login(){
@@ -151,15 +205,14 @@ password.value===localStorage.getItem("password")){
 localStorage.setItem("logged","true");
 openDashboard();
 }else{
-msg.innerText="Invalid credentials";
+authMsg.innerText="Invalid credentials.";
 }
 }
 
 function openDashboard(){
-auth.classList.add("hidden");
-dashboard.classList.remove("hidden");
-welcome.innerText="Welcome "+localStorage.getItem("email");
-todayDate.innerText="📅 "+new Date().toDateString();
+switchScreen('dashboard');
+welcomeText.innerText="Welcome " + localStorage.getItem("email");
+todayDate.innerText="📅 " + new Date().toDateString();
 loadGoal();
 loadTasks();
 loadStreak();
@@ -176,30 +229,37 @@ loadGoal();
 }
 
 function loadGoal(){
-savedGoal.innerText="Goal: "+(localStorage.getItem("goal")||"No goal set");
+let goal = localStorage.getItem("goal");
+goalDisplay.innerText = goal ? "Goal: " + goal : "No goal set.";
 }
 
 function addTask(){
-if(subjectInput.value===""||taskInput.value==="") return;
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+if(subjectInput.value==="" || taskInput.value==="") return;
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 tasks.push({
 subject:subjectInput.value,
 task:taskInput.value,
 done:false
 });
 localStorage.setItem("tasks",JSON.stringify(tasks));
+
 subjectInput.value="";
 taskInput.value="";
 loadTasks();
 }
 
 function loadTasks(){
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 taskList.innerHTML="";
 let completed=0;
 
 tasks.forEach((t,index)=>{
 let li=document.createElement("li");
+
+let left=document.createElement("span");
+left.innerText=t.subject + " - " + t.task;
+
 let checkbox=document.createElement("input");
 checkbox.type="checkbox";
 checkbox.checked=t.done;
@@ -208,27 +268,29 @@ t.done=!t.done;
 localStorage.setItem("tasks",JSON.stringify(tasks));
 loadTasks();
 };
+
+li.appendChild(left);
 li.appendChild(checkbox);
-li.append(" "+t.subject+" - "+t.task);
 taskList.appendChild(li);
+
 if(t.done) completed++;
 });
 
-let percent=tasks.length?Math.round((completed/tasks.length)*100):0;
-progressBar.style.width=percent+"%";
-progressText.innerText=percent+"% completed";
+let percent = tasks.length ? Math.round((completed/tasks.length)*100) : 0;
+progressBar.style.width = percent + "%";
+progressText.innerText = percent + "% completed";
 }
 
 function markStudied(){
-let streak=parseInt(localStorage.getItem("streak"))||0;
+let streak = parseInt(localStorage.getItem("streak")) || 0;
 streak++;
 localStorage.setItem("streak",streak);
 loadStreak();
 }
 
 function loadStreak(){
-let streak=parseInt(localStorage.getItem("streak"))||0;
-streakText.innerText=streak+" days";
+let streak = parseInt(localStorage.getItem("streak")) || 0;
+streakText.innerText = streak + " days";
 }
 
 if(localStorage.getItem("logged")==="true"){
