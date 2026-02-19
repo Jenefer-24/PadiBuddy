@@ -8,10 +8,9 @@
 
 <body>
 
-<!-- REGISTER SCREEN -->
+<!-- REGISTER -->
 <div class="screen active" id="register">
 <h2>Register</h2>
-
 <input id="username" placeholder="Username">
 <input id="password" type="password" placeholder="Password">
 <input id="age" type="number" placeholder="Age">
@@ -30,40 +29,27 @@
 </select>
 
 <button onclick="register()">Register</button>
-
-<p style="margin-top:10px;">
-Already have an account?
-<button onclick="switchScreen('login')">Login</button>
-</p>
-
+<p>Already have account? <button onclick="switchScreen('login')">Login</button></p>
 </div>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div class="screen" id="login">
 <h2>Login</h2>
-
 <input id="loginUser" placeholder="Username">
 <input id="loginPass" type="password" placeholder="Password">
-
 <button onclick="login()">Login</button>
-
-<p style="margin-top:10px;">
-No account?
-<button onclick="switchScreen('register')">Register</button>
-</p>
-
+<p>No account? <button onclick="switchScreen('register')">Register</button></p>
 </div>
 
-<!-- DASHBOARD SCREEN -->
+<!-- DASHBOARD -->
 <div class="screen" id="dashboard">
 
-<!-- 3 DOT MENU BUTTON -->
 <div class="menu-btn" onclick="toggleMenu()">⋮</div>
 
-<!-- SIDE MENU (Hidden by default) -->
 <div class="side-menu" id="sideMenu">
 <button onclick="toggleMenu()">Close</button>
-<button onclick="showProfile()">Profile</button>
+<button onclick="openProfile()">Profile</button>
+<button onclick="switchScreen('myDates'); toggleMenu();">My Dates</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -79,13 +65,45 @@ No account?
 <div class="progress-bar" id="progressBar"></div>
 </div>
 
-<h3 style="margin-top:20px;">🔥 Study Streak</h3>
+<h3>🔥 Study Streak</h3>
 <p id="streakText"></p>
 <button onclick="markStudied()">Mark Today Studied</button>
 
 </div>
 
-<script src="script.js"></script>
+<!-- PROFILE -->
+<div class="screen" id="profileScreen">
+<h2>Your Profile</h2>
+<div id="avatar"></div>
+<p id="profileDetails"></p>
+<button onclick="switchScreen('dashboard')">Back</button>
+</div>
 
+<!-- MY DATES -->
+<div class="screen" id="myDates">
+<h2>My Academic Records</h2>
+
+<h3>📊 Enter Test Result</h3>
+<input id="resultSubject" placeholder="Subject">
+<input id="resultType" placeholder="Test Type (Unit Test / Midterm)">
+<input id="resultMarks" type="number" placeholder="Marks">
+<button onclick="saveResult()">Save Result</button>
+
+<ul id="resultList"></ul>
+
+<hr style="margin:20px 0;">
+
+<h3>📅 Upcoming Exam Schedule</h3>
+<input id="examSubject" placeholder="Subject">
+<input id="examDate" type="date">
+<button onclick="saveExam()">Add Exam Date</button>
+
+<ul id="examList"></ul>
+
+<br>
+<button onclick="switchScreen('dashboard')">Back</button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
