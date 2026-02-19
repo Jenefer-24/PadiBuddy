@@ -9,17 +9,18 @@ document.getElementById("sideMenu").classList.toggle("active");
 
 function register(){
 let username=document.getElementById("username").value;
+let password=document.getElementById("password").value;
 let age=document.getElementById("age").value;
 let gender=document.getElementById("gender").value;
 let study=document.getElementById("study").value;
 
-if(username===""||age===""){
+if(username===""||password===""||age===""){
 alert("Fill all details");
 return;
 }
 
 localStorage.setItem("profile",JSON.stringify({
-username,age,gender,study
+username,password,age,gender,study
 }));
 
 localStorage.setItem("streak",0);
@@ -30,20 +31,20 @@ switchScreen("login");
 
 function login(){
 let username=document.getElementById("loginUser").value;
+let password=document.getElementById("loginPass").value;
 let profile=JSON.parse(localStorage.getItem("profile"));
 
-if(profile && username===profile.username){
+if(profile && username===profile.username && password===profile.password){
 localStorage.setItem("logged","true");
 openDashboard();
 }else{
-alert("Invalid username");
+alert("Invalid username or password");
 }
 }
 
 function openDashboard(){
 switchScreen("dashboard");
 let profile=JSON.parse(localStorage.getItem("profile"));
-
 document.getElementById("welcomeText").innerText="Welcome "+profile.username;
 showQuote();
 loadTasks();
