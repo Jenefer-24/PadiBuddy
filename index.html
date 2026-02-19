@@ -3,301 +3,70 @@
 <head>
 <title>PadiBuddy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-body{
-font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#4e73df,#764ba2);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-color:white;
-}
-
-.screen{
-width:100%;
-max-width:520px;
-background:rgba(0,0,0,0.35);
-padding:30px;
-border-radius:18px;
-box-shadow:0 15px 40px rgba(0,0,0,0.4);
-text-align:center;
-display:none;
-}
-
-.screen.active{
-display:block;
-}
-
-h1{
-margin-bottom:10px;
-}
-
-h2{
-margin-bottom:15px;
-}
-
-p{
-margin-bottom:10px;
-opacity:0.9;
-}
-
-input{
-width:100%;
-padding:10px;
-margin:8px 0;
-border:none;
-border-radius:8px;
-outline:none;
-}
-
-button{
-padding:10px 20px;
-margin-top:10px;
-border:none;
-border-radius:8px;
-background:white;
-color:#764ba2;
-font-weight:bold;
-cursor:pointer;
-transition:0.2s;
-}
-
-button:hover{
-transform:scale(1.05);
-}
-
-.section-title{
-margin-top:20px;
-margin-bottom:10px;
-font-size:18px;
-font-weight:bold;
-}
-
-ul{
-list-style:none;
-margin-top:10px;
-text-align:left;
-}
-
-li{
-background:rgba(255,255,255,0.15);
-padding:8px;
-border-radius:6px;
-margin:6px 0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.progress-container{
-background:rgba(255,255,255,0.2);
-border-radius:10px;
-height:15px;
-margin-top:10px;
-overflow:hidden;
-}
-
-.progress-bar{
-height:100%;
-background:#00ffcc;
-width:0%;
-transition:0.3s;
-}
-
-.small{
-font-size:14px;
-opacity:0.8;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- LANDING -->
-<div class="screen active" id="landing">
-<h1>PadiBuddy 🚀</h1>
-<p>Your Personal Study Planner</p>
-<button onclick="showAuth()">Get Started</button>
+<!-- REGISTER -->
+<div class="screen active" id="register">
+<h2>Register</h2>
+<input id="username" placeholder="Username">
+<input id="age" type="number" placeholder="Age">
+<select id="gender">
+<option>Male</option>
+<option>Female</option>
+</select>
+<select id="study">
+<option>School</option>
+<option>College</option>
+<option>Special Course</option>
+</select>
+<button onclick="register()">Register</button>
 </div>
 
-<!-- AUTH -->
-<div class="screen" id="auth">
-<h2>Login / Register</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="register()">Register</button>
+<!-- LOGIN -->
+<div class="screen" id="login">
+<h2>Login</h2>
+<input id="loginUser" placeholder="Username">
 <button onclick="login()">Login</button>
-<p id="authMsg" class="small"></p>
-<button onclick="goLanding()">Back</button>
 </div>
 
 <!-- DASHBOARD -->
 <div class="screen" id="dashboard">
 
+<div class="menu-btn" onclick="toggleMenu()">⋮</div>
+
+<div class="side-menu" id="sideMenu">
+<button onclick="toggleMenu()">Close</button>
+<button onclick="alert(JSON.stringify(JSON.parse(localStorage.getItem('profile')),null,2))">Profile</button>
+<button onclick="alert('AI Assistant coming soon')">AI Assistant</button>
+<button onclick="alert('Calendar coming soon')">Calendar</button>
+<button onclick="alert('Notifications coming soon')">Notifications</button>
+<button onclick="logout()">Logout</button>
+</div>
+
 <h2 id="welcomeText"></h2>
-<p id="todayDate" class="small"></p>
 
-<div class="section-title">🎯 Today's Goal</div>
-<input id="goalInput" placeholder="Enter today's goal">
-<button onclick="saveGoal()">Save Goal</button>
-<p id="goalDisplay" class="small"></p>
-
-<div class="section-title">📚 Add Study Task</div>
-<input id="subjectInput" placeholder="Subject">
-<input id="taskInput" placeholder="Task description">
+<input id="taskInput" placeholder="Enter study task">
+<input id="timeLimit" type="number" placeholder="Time limit (minutes)">
 <button onclick="addTask()">Add Task</button>
+
+<p id="motivation"></p>
 
 <ul id="taskList"></ul>
 
-<div class="section-title">📊 Progress</div>
 <div class="progress-container">
 <div class="progress-bar" id="progressBar"></div>
 </div>
-<p id="progressText" class="small"></p>
 
-<div class="section-title">🔥 Study Streak</div>
+<h3>🔥 Study Streak</h3>
 <p id="streakText"></p>
 <button onclick="markStudied()">Mark Today Studied</button>
 
-<br><br>
-<button onclick="logout()">Logout</button>
-
 </div>
 
-<script>
-
-function switchScreen(id){
-document.querySelectorAll('.screen').forEach(screen=>{
-screen.classList.remove('active');
-});
-document.getElementById(id).classList.add('active');
-}
-
-function showAuth(){
-switchScreen('auth');
-}
-
-function goLanding(){
-switchScreen('landing');
-}
-
-function register(){
-if(email.value==="" || password.value===""){
-authMsg.innerText="Fill all fields.";
-return;
-}
-localStorage.setItem("email",email.value);
-localStorage.setItem("password",password.value);
-authMsg.innerText="Registered successfully! Now login.";
-}
-
-function login(){
-if(email.value===localStorage.getItem("email") &&
-password.value===localStorage.getItem("password")){
-localStorage.setItem("logged","true");
-openDashboard();
-}else{
-authMsg.innerText="Invalid credentials.";
-}
-}
-
-function openDashboard(){
-switchScreen('dashboard');
-welcomeText.innerText="Welcome " + localStorage.getItem("email");
-todayDate.innerText="📅 " + new Date().toDateString();
-loadGoal();
-loadTasks();
-loadStreak();
-}
-
-function logout(){
-localStorage.setItem("logged","false");
-location.reload();
-}
-
-function saveGoal(){
-localStorage.setItem("goal",goalInput.value);
-loadGoal();
-}
-
-function loadGoal(){
-let goal = localStorage.getItem("goal");
-goalDisplay.innerText = goal ? "Goal: " + goal : "No goal set.";
-}
-
-function addTask(){
-if(subjectInput.value==="" || taskInput.value==="") return;
-
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-tasks.push({
-subject:subjectInput.value,
-task:taskInput.value,
-done:false
-});
-localStorage.setItem("tasks",JSON.stringify(tasks));
-
-subjectInput.value="";
-taskInput.value="";
-loadTasks();
-}
-
-function loadTasks(){
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-taskList.innerHTML="";
-let completed=0;
-
-tasks.forEach((t,index)=>{
-let li=document.createElement("li");
-
-let left=document.createElement("span");
-left.innerText=t.subject + " - " + t.task;
-
-let checkbox=document.createElement("input");
-checkbox.type="checkbox";
-checkbox.checked=t.done;
-checkbox.onchange=function(){
-t.done=!t.done;
-localStorage.setItem("tasks",JSON.stringify(tasks));
-loadTasks();
-};
-
-li.appendChild(left);
-li.appendChild(checkbox);
-taskList.appendChild(li);
-
-if(t.done) completed++;
-});
-
-let percent = tasks.length ? Math.round((completed/tasks.length)*100) : 0;
-progressBar.style.width = percent + "%";
-progressText.innerText = percent + "% completed";
-}
-
-function markStudied(){
-let streak = parseInt(localStorage.getItem("streak")) || 0;
-streak++;
-localStorage.setItem("streak",streak);
-loadStreak();
-}
-
-function loadStreak(){
-let streak = parseInt(localStorage.getItem("streak")) || 0;
-streakText.innerText = streak + " days";
-}
-
-if(localStorage.getItem("logged")==="true"){
-openDashboard();
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
