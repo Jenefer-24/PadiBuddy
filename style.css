@@ -24,6 +24,7 @@ box-shadow:0 10px 40px rgba(0,0,0,0.4);
 text-align:center;
 display:none;
 position:relative;
+overflow:hidden;
 }
 
 .screen.active{
@@ -56,27 +57,26 @@ transform:scale(1.05);
 
 .menu-btn{
 position:absolute;
-top:10px;
+top:15px;
 left:15px;
 font-size:24px;
 cursor:pointer;
 }
 
 .side-menu{
+display:none;  /* Completely hidden */
 position:absolute;
 top:0;
-left:-100%;
+left:0;
 width:220px;
 height:100%;
 background:#1e1e1e;
 padding:20px;
-transition:0.3s;
-border-top-left-radius:15px;
-border-bottom-left-radius:15px;
+z-index:10;
 }
 
 .side-menu.active{
-left:0;
+display:block; /* Visible only when active */
 }
 
 .side-menu button{
