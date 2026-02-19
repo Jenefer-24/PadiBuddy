@@ -23,7 +23,7 @@ username,age,gender,study
 }));
 
 localStorage.setItem("streak",0);
-localStorage.setItem("lastStreakDate","");
+localStorage.setItem("lastStreak","");
 alert("Registered successfully!");
 switchScreen("login");
 }
@@ -43,7 +43,9 @@ alert("Invalid username");
 function openDashboard(){
 switchScreen("dashboard");
 let profile=JSON.parse(localStorage.getItem("profile"));
+
 document.getElementById("welcomeText").innerText="Welcome "+profile.username;
+showQuote();
 loadTasks();
 loadStreak();
 }
@@ -53,23 +55,26 @@ localStorage.setItem("logged","false");
 location.reload();
 }
 
+function showQuote(){
+let quotes=[
+"Stay consistent.",
+"Focus beats motivation.",
+"Discipline creates success.",
+"Small steps daily.",
+"Your future self is watching."
+];
+let random=quotes[Math.floor(Math.random()*quotes.length)];
+document.getElementById("quote").innerText=random;
+}
+
 function addTask(){
 let task=document.getElementById("taskInput").value;
-let time=document.getElementById("timeLimit").value;
-
 if(task==="") return;
 
 let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-tasks.push({
-task,
-time,
-done:false,
-date:new Date().toDateString()
-});
-
+tasks.push({task,done:false});
 localStorage.setItem("tasks",JSON.stringify(tasks));
 document.getElementById("taskInput").value="";
-showMotivation();
 loadTasks();
 }
 
@@ -82,7 +87,8 @@ let completed=0;
 tasks.forEach((t,index)=>{
 let li=document.createElement("li");
 let span=document.createElement("span");
-span.innerText=t.task+" ("+t.time+" min)";
+span.innerText=t.task;
+
 let checkbox=document.createElement("input");
 checkbox.type="checkbox";
 checkbox.checked=t.done;
@@ -104,39 +110,24 @@ let percent=tasks.length?Math.round((completed/tasks.length)*100):0;
 document.getElementById("progressBar").style.width=percent+"%";
 }
 
-function showMotivation(){
-let quotes=[
-"You’ve got this!",
-"Consistency beats motivation.",
-"Small progress is still progress.",
-"Take a short break after 45 mins.",
-"Focus deeply. No distractions."
-];
-let random=quotes[Math.floor(Math.random()*quotes.length)];
-document.getElementById("motivation").innerText=random;
-}
-
 function loadStreak(){
-let today=new Date().toDateString();
-let lastDate=localStorage.getItem("lastStreakDate");
 let streak=parseInt(localStorage.getItem("streak"))||0;
-
 document.getElementById("streakText").innerText=streak+" days";
 }
 
 function markStudied(){
 let today=new Date().toDateString();
-let lastDate=localStorage.getItem("lastStreakDate");
+let last=localStorage.getItem("lastStreak");
 let streak=parseInt(localStorage.getItem("streak"))||0;
 
-if(lastDate===today){
-alert("You already updated streak today!");
+if(last===today){
+alert("Already updated today!");
 return;
 }
 
 streak++;
 localStorage.setItem("streak",streak);
-localStorage.setItem("lastStreakDate",today);
+localStorage.setItem("lastStreak",today);
 loadStreak();
 }
 
