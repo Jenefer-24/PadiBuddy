@@ -7,301 +7,55 @@
 <style>
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(-45deg,#0f172a,#1e1b4b,#312e81,#1e293b);
-  background-size: 400% 400%;
-  animation: gradientMove 12s ease infinite;
+  font-family: Arial;
+  background: #111827;
   color: white;
+  text-align: center;
 }
 
-@keyframes gradientMove {
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
+.hidden { display: none; }
 
-.hidden { display:none; }
-
-/* Landing */
 .section {
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  padding:20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 button {
-  padding:10px 20px;
-  border:none;
-  border-radius:8px;
-  background:linear-gradient(90deg,#6366f1,#8b5cf6);
-  color:white;
-  cursor:pointer;
-  margin-top:10px;
-}
-
-input {
-  padding:10px;
-  margin:8px;
-  border-radius:8px;
-  border:none;
-  width:250px;
-}
-
-/* App Layout */
-.app { display:flex; }
-
-.sidebar {
-  width:220px;
-  height:100vh;
-  background:rgba(30,41,59,0.9);
-  padding:20px;
-}
-
-.sidebar button {
-  width:100%;
-  margin:10px 0;
-  background:rgba(255,255,255,0.1);
-}
-
-.main {
-  flex:1;
-  padding:40px;
-}
-
-.card {
-  background:rgba(255,255,255,0.08);
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
-}
-
-.progress-bar {
-  background:rgba(255,255,255,0.1);
-  height:20px;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.progress-fill {
-  height:100%;
-  background:linear-gradient(90deg,#6366f1,#8b5cf6);
-  width:0%;
-  text-align:center;
-  font-size:12px;
-  line-height:20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: white;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LANDING -->
 <div id="landing" class="section">
-  <h1 style="font-size:48px;">Welcome to PadiBuddy 🚀</h1>
-  <p>Your AI-powered study planner for smarter exam preparation.</p>
-  <button onclick="showAuth()">Start Planning</button>
+  <h1>Welcome to PadiBuddy</h1>
+  <button id="startBtn">Start Planning</button>
 </div>
 
-<!-- AUTH -->
 <div id="auth" class="section hidden">
-  <h2>Register / Login</h2>
-  <input type="text" id="username" placeholder="Username"><br>
-  <input type="password" id="password" placeholder="Password"><br>
-  <button onclick="register()">Register</button>
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- APP -->
-<div id="app" class="app hidden">
-
-  <div class="sidebar">
-    <h2>PadiBuddy</h2>
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('planner')">Planner</button>
-    <button onclick="showSection('ai')">AI Assistant</button>
-    <button onclick="showSection('profile')">Profile</button>
-    <button onclick="logout()">Logout</button>
-  </div>
-
-  <div class="main">
-
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="page">
-      <h1 id="welcomeText"></h1>
-
-      <div class="card">
-        <h3>Study Stats</h3>
-        <p>Total Tasks: <span id="totalTasks">0</span></p>
-        <p>Completed Tasks: <span id="completedTasks">0</span></p>
-      </div>
-
-      <div class="card">
-        <h3>Progress</h3>
-        <div class="progress-bar">
-          <div id="progressFill" class="progress-fill">0%</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Daily Streak 🔥</h3>
-        <p id="streakCount">1 day</p>
-      </div>
-    </div>
-
-    <!-- PLANNER -->
-    <div id="planner" class="page hidden">
-      <h2>Study Planner</h2>
-      <input type="text" id="taskInput" placeholder="Enter task">
-      <button onclick="addTask()">Add</button>
-      <ul id="taskList"></ul>
-    </div>
-
-    <!-- AI -->
-    <div id="ai" class="page hidden">
-      <h2>AI Assistant</h2>
-      <input type="text" id="aiInput" placeholder="Ask about exams or productivity">
-      <button onclick="aiReply()">Ask</button>
-      <div id="aiOutput"></div>
-    </div>
-
-    <!-- PROFILE -->
-    <div id="profile" class="page hidden">
-      <h2>Profile</h2>
-      <p>Username: <span id="profileName"></span></p>
-    </div>
-
-  </div>
+  <h2>Login Page</h2>
+  <button onclick="goBack()">Back</button>
 </div>
 
 <script>
-
-/* Navigation */
-function showAuth(){
+document.getElementById("startBtn").addEventListener("click", function() {
   document.getElementById("landing").classList.add("hidden");
   document.getElementById("auth").classList.remove("hidden");
-}
+});
 
-function showSection(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-
-/* Register/Login */
-function register(){
-  localStorage.setItem("username", document.getElementById("username").value);
-  localStorage.setItem("password", document.getElementById("password").value);
-  alert("Registered successfully!");
-}
-
-function login(){
-  if(document.getElementById("username").value === localStorage.getItem("username") &&
-     document.getElementById("password").value === localStorage.getItem("password")){
-      localStorage.setItem("loggedIn","true");
-      openApp();
-  } else alert("Invalid credentials");
-}
-
-function openApp(){
+function goBack() {
   document.getElementById("auth").classList.add("hidden");
-  document.getElementById("landing").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-
-  document.getElementById("welcomeText").innerText =
-    "Hello, " + localStorage.getItem("username") + " 👋";
-
-  document.getElementById("profileName").innerText =
-    localStorage.getItem("username");
-
-  updateStats();
-  updateStreak();
+  document.getElementById("landing").classList.remove("hidden");
 }
-
-function logout(){
-  localStorage.removeItem("loggedIn");
-  location.reload();
-}
-
-window.onload = function(){
-  if(localStorage.getItem("loggedIn")==="true"){
-    openApp();
-  }
-}
-
-/* Planner */
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-function addTask(){
-  let task = document.getElementById("taskInput").value;
-  if(task==="") return;
-  tasks.push({name:task, done:false});
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  document.getElementById("taskInput").value="";
-  renderTasks();
-}
-
-function renderTasks(){
-  let list = document.getElementById("taskList");
-  list.innerHTML="";
-  tasks.forEach((t,i)=>{
-    let li=document.createElement("li");
-    li.innerHTML = `<input type="checkbox" ${t.done?"checked":""} 
-      onchange="toggleTask(${i})"> ${t.name}`;
-    list.appendChild(li);
-  });
-  updateStats();
-}
-
-function toggleTask(i){
-  tasks[i].done=!tasks[i].done;
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  renderTasks();
-}
-
-function updateStats(){
-  let total=tasks.length;
-  let completed=tasks.filter(t=>t.done).length;
-
-  document.getElementById("totalTasks").innerText=total;
-  document.getElementById("completedTasks").innerText=completed;
-
-  let percent = total?Math.round((completed/total)*100):0;
-  document.getElementById("progressFill").style.width=percent+"%";
-  document.getElementById("progressFill").innerText=percent+"%";
-}
-
-/* Streak */
-function updateStreak(){
-  let today=new Date().toDateString();
-  let last=localStorage.getItem("lastVisit");
-  let streak=parseInt(localStorage.getItem("streak")||1);
-
-  if(last!==today){
-    streak++;
-    localStorage.setItem("streak",streak);
-    localStorage.setItem("lastVisit",today);
-  }
-
-  document.getElementById("streakCount").innerText=streak+" days";
-}
-
-/* AI */
-function aiReply(){
-  let q=document.getElementById("aiInput").value.toLowerCase();
-  let r="Stay consistent and revise daily.";
-
-  if(q.includes("exam")) r="Create 7-day revision plan and practice mock tests.";
-  if(q.includes("productivity")) r="Use Pomodoro: 25 min focus, 5 min break.";
-  if(q.includes("weak")) r="Spend 30 extra minutes daily on weak subjects.";
-
-  document.getElementById("aiOutput").innerHTML="<p><b>AI:</b> "+r+"</p>";
-}
-
-renderTasks();
-
 </script>
 
 </body>
