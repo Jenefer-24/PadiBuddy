@@ -1,328 +1,271 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PadiBuddy</title>
+<title>PadiBuddy 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
 margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#5f72be,#9b59b6);
+font-family:Segoe UI;
+background:#121212;
 color:white;
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:220px;
+background:#1e1e1e;
+height:100vh;
+padding-top:20px;
+position:fixed;
+}
+
+.sidebar h2{
 text-align:center;
+margin-bottom:30px;
+color:#4e9eff;
 }
 
-/* 3 DOT */
-.menu-icon{
-position:absolute;
-top:15px;
-left:15px;
-font-size:24px;
-cursor:pointer;
-display:none;
-}
-
-.dropdown{
-position:absolute;
-top:50px;
-left:15px;
-background:white;
-color:black;
-border-radius:8px;
-padding:10px;
-display:none;
-width:170px;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
-}
-
-.dropdown button{
-width:100%;
-margin:5px 0;
-background:#6c5ce7;
-color:white;
-}
-
-/* Card */
-.card{
-background:rgba(0,0,0,0.2);
-padding:25px;
-border-radius:15px;
-width:400px;
-margin:80px auto;
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* Inputs */
-input,select{
+.sidebar button{
+display:block;
 width:90%;
+margin:10px auto;
 padding:10px;
+background:#2a2a2a;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+text-align:left;
+}
+
+.sidebar button:hover{
+background:#4e9eff;
+}
+
+/* MAIN */
+.main{
+margin-left:220px;
+padding:30px;
+width:100%;
+}
+
+/* PAGES */
+.page{display:none;}
+.active{display:block;}
+
+/* CARD */
+.card{
+background:#1f1f1f;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+/* INPUTS */
+input,select{
+width:100%;
+padding:8px;
 margin:8px 0;
 border-radius:6px;
 border:none;
+background:#2a2a2a;
+color:white;
 }
 
-/* Buttons */
-button{
-padding:8px 15px;
+/* BUTTON */
+.btn{
+background:#4e9eff;
 border:none;
+padding:8px 15px;
 border-radius:6px;
+color:white;
 cursor:pointer;
-background:white;
-color:#6c5ce7;
-font-weight:bold;
-margin:5px;
 }
 
-button:hover{
-opacity:0.9;
-}
-
-.hidden{
-display:none;
-}
-
-/* Progress */
+/* PROGRESS */
 .progress{
-width:60%;
-background:white;
-border-radius:10px;
-margin:15px auto;
+background:#2a2a2a;
 height:15px;
+border-radius:10px;
+margin-top:10px;
 }
 
 .progress-bar{
 height:100%;
-background:#2ecc71;
+background:#4e9eff;
 border-radius:10px;
 width:0%;
 transition:0.4s;
 }
 
-/* Task */
+/* TASK */
 .task{
-background:rgba(255,255,255,0.15);
+background:#2a2a2a;
 padding:10px;
-border-radius:8px;
-margin:8px auto;
-width:60%;
-text-align:left;
+border-radius:6px;
+margin:10px 0;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-/* Chat */
-.chat-box{
-width:70%;
-margin:20px auto;
-background:rgba(255,255,255,0.1);
-padding:15px;
-border-radius:10px;
+/* CHAT */
+.chat{
+background:#2a2a2a;
 height:300px;
 overflow-y:auto;
-text-align:left;
+padding:10px;
+border-radius:6px;
+margin-bottom:10px;
 }
 
-.user-msg{
-text-align:right;
-margin:5px;
-}
-
-.ai-msg{
-text-align:left;
-margin:5px;
-color:#ffeaa7;
-}
+.user{ text-align:right; color:#4e9eff; }
+.ai{ text-align:left; color:#90ee90; }
 
 </style>
 </head>
 
 <body>
 
-<div class="menu-icon" id="menuIcon" onclick="toggleMenu()">⋮</div>
-
-<div class="dropdown" id="dropdownMenu">
-<button onclick="openProfile()">Profile</button>
-<button onclick="openAI()">AI Assistance</button>
+<div class="sidebar">
+<h2>PadiBuddy</h2>
+<button onclick="openPage('dashboard')">Dashboard</button>
+<button onclick="openPage('tasks')">Tasks</button>
+<button onclick="openPage('analytics')">Analytics</button>
+<button onclick="openPage('ai')">AI Assistant</button>
+<button onclick="openPage('profile')">Profile</button>
 <button onclick="logout()">Logout</button>
 </div>
 
-<!-- REGISTER -->
-<div class="card" id="registerBox">
-<h2>Register</h2>
-<input id="regUser" placeholder="Username">
-<input type="password" id="regPass" placeholder="Password">
-<input id="regAge" placeholder="Age">
-<select id="regGender">
-<option value="">Select Gender</option>
-<option>Male</option>
-<option>Female</option>
-</select>
-<select id="regStudy">
-<option value="">What are you studying?</option>
-<option>School</option>
-<option>College</option>
-<option>Special Course</option>
-</select>
-<br>
-<button onclick="register()">Register</button>
-<br>
-Already have account?
-<button onclick="showLogin()">Login</button>
-</div>
-
-<!-- LOGIN -->
-<div class="card hidden" id="loginBox">
-<h2>Login</h2>
-<input id="loginUser" placeholder="Username">
-<input type="password" id="loginPass" placeholder="Password">
-<br>
-<button onclick="login()">Login</button>
-<br>
-New user?
-<button onclick="showRegister()">Register</button>
-</div>
+<div class="main">
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-<h2 id="welcomeText"></h2>
-<p id="quoteText"></p>
+<div id="dashboard" class="page active">
+<div class="card">
+<h2 id="welcome"></h2>
+<p id="quote"></p>
+</div>
 
+<div class="card">
+<h3>Study Streak</h3>
+<p>🔥 <span id="streak">0</span> days</p>
+<button class="btn" onclick="updateStreak()">Update Streak</button>
+</div>
+</div>
+
+<!-- TASKS -->
+<div id="tasks" class="page">
+<div class="card">
+<h3>Add Task</h3>
 <input id="taskInput" placeholder="Enter task">
 <input type="date" id="deadlineInput">
-<br>
-<button onclick="addTask()">Add Task</button>
-
+<button class="btn" onclick="addTask()">Add</button>
 <div class="progress">
-<div class="progress-bar" id="progressBar"></div>
+<div id="progressBar" class="progress-bar"></div>
+</div>
 </div>
 
+<div class="card">
+<h3>Your Tasks</h3>
 <div id="taskList"></div>
-
-<p>🔥 Streak: <span id="streakCount">0</span> days</p>
-<button onclick="updateStreak()">Update Streak</button>
+</div>
 </div>
 
-<!-- PROFILE PAGE -->
-<div id="profilePage" class="hidden">
-<h2>Profile</h2>
-<div id="profileContent"></div>
-<button onclick="goBack()">Back</button>
+<!-- ANALYTICS -->
+<div id="analytics" class="page">
+<div class="card">
+<h3>Analytics</h3>
+<p>Total Tasks: <span id="totalTasks"></span></p>
+<p>Completed: <span id="completedTasks"></span></p>
+<p>Completion Rate: <span id="completionRate"></span>%</p>
+</div>
 </div>
 
-<!-- AI PAGE -->
-<div id="aiPage" class="hidden">
-<h2>AI Study Assistant</h2>
-
-<div class="chat-box" id="chatBox"></div>
-
+<!-- AI -->
+<div id="ai" class="page">
+<div class="card">
+<h3>AI Assistant</h3>
+<div id="chatBox" class="chat"></div>
 <input id="aiInput" placeholder="Ask something...">
-<button onclick="sendAI()">Send</button>
-<br>
-<button onclick="goBack()">Back</button>
+<button class="btn" onclick="sendAI()">Send</button>
+</div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<div class="card">
+<h3>Profile</h3>
+<p id="profileInfo"></p>
+</div>
+</div>
+
 </div>
 
 <script>
 
-const quotes=[
-"Focus & Win.",
-"Small progress is still progress.",
-"Discipline beats motivation.",
-"Consistency creates success.",
-"You are capable of amazing things."
-];
-
-/* MENU */
-function toggleMenu(){
-dropdownMenu.style.display =
-dropdownMenu.style.display==="block"?"none":"block";
-}
-
-/* REGISTER */
-function register(){
-let data={
-user:regUser.value,
-pass:regPass.value,
-age:regAge.value,
-gender:regGender.value,
-study:regStudy.value,
+/* INIT USER */
+if(!localStorage.getItem("padiUser")){
+localStorage.setItem("padiUser",JSON.stringify({
+username:"Student",
 tasks:[],
 streak:0,
-lastStreakDate:null
-};
-
-localStorage.setItem("padiUser",JSON.stringify(data));
-alert("Registered!");
-showLogin();
+lastDate:null
+}));
 }
 
-/* LOGIN */
-function login(){
-let saved=JSON.parse(localStorage.getItem("padiUser"));
-if(loginUser.value===saved.user &&
-loginPass.value===saved.pass){
+let user = JSON.parse(localStorage.getItem("padiUser"));
 
-registerBox.classList.add("hidden");
-loginBox.classList.add("hidden");
-dashboard.classList.remove("hidden");
-menuIcon.style.display="block";
+welcome.innerText="Welcome "+user.username;
 
-welcomeText.innerText="Welcome "+saved.user;
-quoteText.innerText=quotes[Math.floor(Math.random()*quotes.length)];
-loadTasks();
-streakCount.innerText=saved.streak;
+const quotes=[
+"Discipline creates success.",
+"Small progress is powerful.",
+"Consistency beats motivation.",
+"Stay focused."
+];
+quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
 
-}else{
-alert("Wrong credentials");
-}
-}
-
-/* SWITCH */
-function showLogin(){
-registerBox.classList.add("hidden");
-loginBox.classList.remove("hidden");
-}
-function showRegister(){
-loginBox.classList.add("hidden");
-registerBox.classList.remove("hidden");
+/* PAGE SWITCH */
+function openPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+updateAnalytics();
 }
 
 /* TASK */
 function addTask(){
-let data=JSON.parse(localStorage.getItem("padiUser"));
-let text=taskInput.value;
-if(!text) return;
+if(!taskInput.value) return;
 
-data.tasks.push({
-text:text,
-created:new Date().toLocaleDateString(),
+user.tasks.push({
+text:taskInput.value,
 deadline:deadlineInput.value||"No deadline",
 done:false
 });
 
-localStorage.setItem("padiUser",JSON.stringify(data));
+localStorage.setItem("padiUser",JSON.stringify(user));
 taskInput.value="";
 deadlineInput.value="";
 loadTasks();
 }
 
 function loadTasks(){
-let data=JSON.parse(localStorage.getItem("padiUser"));
 taskList.innerHTML="";
 let done=0;
 
-data.tasks.forEach((t,i)=>{
+user.tasks.forEach((t,i)=>{
 let div=document.createElement("div");
 div.className="task";
-div.innerHTML="<b>"+t.text+"</b><br><small>📅 "+
-t.created+" | ⏳ "+t.deadline+"</small>";
+div.innerHTML="<span>"+t.text+" ("+t.deadline+")</span>";
 
 let check=document.createElement("input");
 check.type="checkbox";
 check.checked=t.done;
-
 check.onchange=function(){
-data.tasks[i].done=this.checked;
-localStorage.setItem("padiUser",JSON.stringify(data));
-if(this.checked) alert("Amazing! Keep going 🚀");
+user.tasks[i].done=this.checked;
+localStorage.setItem("padiUser",JSON.stringify(user));
 loadTasks();
 };
 
@@ -332,85 +275,71 @@ taskList.appendChild(div);
 if(t.done) done++;
 });
 
-let percent=data.tasks.length?
-(done/data.tasks.length)*100:0;
+let percent=user.tasks.length?
+(done/user.tasks.length)*100:0;
 progressBar.style.width=percent+"%";
+
+updateAnalytics();
+}
+
+loadTasks();
+
+/* ANALYTICS */
+function updateAnalytics(){
+totalTasks.innerText=user.tasks.length;
+let completed=user.tasks.filter(t=>t.done).length;
+completedTasks.innerText=completed;
+completionRate.innerText=
+user.tasks.length?
+Math.round((completed/user.tasks.length)*100):0;
 }
 
 /* STREAK */
 function updateStreak(){
-let data=JSON.parse(localStorage.getItem("padiUser"));
 let today=new Date().toDateString();
-
-if(data.lastStreakDate===today){
+if(user.lastDate===today){
 alert("Already updated today!");
 return;
 }
-
-data.streak++;
-data.lastStreakDate=today;
-localStorage.setItem("padiUser",JSON.stringify(data));
-streakCount.innerText=data.streak;
-alert("Streak Updated 🔥");
+user.streak++;
+user.lastDate=today;
+localStorage.setItem("padiUser",JSON.stringify(user));
+streak.innerText=user.streak;
 }
 
-/* PROFILE PAGE */
-function openProfile(){
-dashboard.classList.add("hidden");
-aiPage.classList.add("hidden");
-profilePage.classList.remove("hidden");
+streak.innerText=user.streak;
 
-let data=JSON.parse(localStorage.getItem("padiUser"));
-
-profileContent.innerHTML=
-"<p><b>Username:</b> "+data.user+"</p>"+
-"<p><b>Age:</b> "+data.age+"</p>"+
-"<p><b>Gender:</b> "+data.gender+"</p>"+
-"<p><b>Studying:</b> "+data.study+"</p>"+
-"<p><b>Streak:</b> "+data.streak+" days</p>";
-}
-
-/* AI PAGE */
-function openAI(){
-dashboard.classList.add("hidden");
-profilePage.classList.add("hidden");
-aiPage.classList.remove("hidden");
-}
-
+/* AI SMART */
 function sendAI(){
-let input=aiInput.value;
-if(!input) return;
+if(!aiInput.value) return;
 
-chatBox.innerHTML+="<div class='user-msg'>"+input+"</div>";
+chatBox.innerHTML+="<div class='user'>"+aiInput.value+"</div>";
 
-let reply="Stay consistent. Break your task into small goals.";
+let response="Stay consistent.";
 
-if(input.toLowerCase().includes("plan"))
-reply="Try 45 min focus + 10 min break sessions.";
+if(aiInput.value.toLowerCase().includes("plan")){
+response="You have "+user.tasks.length+" tasks. Start with the nearest deadline.";
+}
 
-if(input.toLowerCase().includes("exam"))
-reply="Revise daily and solve previous year questions.";
+if(aiInput.value.toLowerCase().includes("progress")){
+let completed=user.tasks.filter(t=>t.done).length;
+response="You completed "+completed+" tasks. Keep going!";
+}
 
-chatBox.innerHTML+="<div class='ai-msg'>"+reply+"</div>";
+chatBox.innerHTML+="<div class='ai'>"+response+"</div>";
 aiInput.value="";
 chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-/* BACK */
-function goBack(){
-profilePage.classList.add("hidden");
-aiPage.classList.add("hidden");
-dashboard.classList.remove("hidden");
-}
+/* PROFILE */
+profileInfo.innerHTML=
+"Username: "+user.username+"<br>"+
+"Total Tasks: "+user.tasks.length+"<br>"+
+"Streak: "+user.streak+" days";
 
-/* LOGOUT */
 function logout(){
-dashboard.classList.add("hidden");
-profilePage.classList.add("hidden");
-aiPage.classList.add("hidden");
-loginBox.classList.remove("hidden");
-menuIcon.style.display="none";
-dropdownMenu.style.display="none";
+alert("For now, logout just resets page.");
+location.reload();
 }
 
 </script>
