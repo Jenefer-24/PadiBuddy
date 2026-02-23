@@ -3,137 +3,36 @@
 <head>
 <title>PadiBuddy 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body{
-margin:0;
-font-family:Segoe UI;
-background:#121212;
-color:white;
-display:flex;
-}
-
-/* SIDEBAR */
-.sidebar{
-width:220px;
-background:#1e1e1e;
-height:100vh;
-padding-top:20px;
-position:fixed;
-}
-
-.sidebar h2{
-text-align:center;
-margin-bottom:30px;
-color:#4e9eff;
-}
-
-.sidebar button{
-display:block;
-width:90%;
-margin:10px auto;
-padding:10px;
-background:#2a2a2a;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-text-align:left;
-}
-
-.sidebar button:hover{
-background:#4e9eff;
-}
-
-/* MAIN */
-.main{
-margin-left:220px;
-padding:30px;
-width:100%;
-}
-
-/* PAGES */
+body{margin:0;font-family:Segoe UI;background:#121212;color:white;display:flex;}
+.sidebar{width:220px;background:#1e1e1e;height:100vh;padding-top:20px;position:fixed;}
+.sidebar h2{text-align:center;color:#4e9eff;margin-bottom:30px;}
+.sidebar button{display:block;width:90%;margin:10px auto;padding:10px;background:#2a2a2a;color:white;border:none;border-radius:6px;cursor:pointer;text-align:left;}
+.sidebar button:hover{background:#4e9eff;}
+.main{margin-left:220px;padding:30px;width:100%;}
 .page{display:none;}
 .active{display:block;}
-
-/* CARD */
-.card{
-background:#1f1f1f;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-}
-
-/* INPUTS */
-input,select{
-width:100%;
-padding:8px;
-margin:8px 0;
-border-radius:6px;
-border:none;
-background:#2a2a2a;
-color:white;
-}
-
-/* BUTTON */
-.btn{
-background:#4e9eff;
-border:none;
-padding:8px 15px;
-border-radius:6px;
-color:white;
-cursor:pointer;
-}
-
-/* PROGRESS */
-.progress{
-background:#2a2a2a;
-height:15px;
-border-radius:10px;
-margin-top:10px;
-}
-
-.progress-bar{
-height:100%;
-background:#4e9eff;
-border-radius:10px;
-width:0%;
-transition:0.4s;
-}
-
-/* TASK */
-.task{
-background:#2a2a2a;
-padding:10px;
-border-radius:6px;
-margin:10px 0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-/* CHAT */
-.chat{
-background:#2a2a2a;
-height:300px;
-overflow-y:auto;
-padding:10px;
-border-radius:6px;
-margin-bottom:10px;
-}
-
-.user{ text-align:right; color:#4e9eff; }
-.ai{ text-align:left; color:#90ee90; }
-
+.card{background:#1f1f1f;padding:20px;border-radius:10px;margin-bottom:20px;}
+input,select{width:100%;padding:8px;margin:8px 0;border-radius:6px;border:none;background:#2a2a2a;color:white;}
+.btn{background:#4e9eff;border:none;padding:8px 15px;border-radius:6px;color:white;cursor:pointer;}
+.progress{background:#2a2a2a;height:15px;border-radius:10px;margin-top:10px;}
+.progress-bar{height:100%;background:#4e9eff;border-radius:10px;width:0%;transition:0.4s;}
+.task{background:#2a2a2a;padding:10px;border-radius:6px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;}
+.chat{background:#2a2a2a;height:300px;overflow-y:auto;padding:10px;border-radius:6px;margin-bottom:10px;}
+.user{text-align:right;color:#4e9eff;}
+.ai{text-align:left;color:#90ee90;}
+table{width:100%;border-collapse:collapse;text-align:center;}
+th,td{border:1px solid #333;padding:5px;}
+td{cursor:text;}
 </style>
 </head>
-
 <body>
 
 <div class="sidebar">
 <h2>PadiBuddy</h2>
 <button onclick="openPage('dashboard')">Dashboard</button>
 <button onclick="openPage('tasks')">Tasks</button>
+<button onclick="openPage('schedule')">Schedule Planner</button>
 <button onclick="openPage('analytics')">Analytics</button>
 <button onclick="openPage('ai')">AI Assistant</button>
 <button onclick="openPage('profile')">Profile</button>
@@ -142,13 +41,11 @@ margin-bottom:10px;
 
 <div class="main">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="page active">
 <div class="card">
 <h2 id="welcome"></h2>
 <p id="quote"></p>
 </div>
-
 <div class="card">
 <h3>Study Streak</h3>
 <p>🔥 <span id="streak">0</span> days</p>
@@ -156,7 +53,6 @@ margin-bottom:10px;
 </div>
 </div>
 
-<!-- TASKS -->
 <div id="tasks" class="page">
 <div class="card">
 <h3>Add Task</h3>
@@ -167,24 +63,44 @@ margin-bottom:10px;
 <div id="progressBar" class="progress-bar"></div>
 </div>
 </div>
-
 <div class="card">
 <h3>Your Tasks</h3>
 <div id="taskList"></div>
 </div>
 </div>
 
-<!-- ANALYTICS -->
+<div id="schedule" class="page">
+<div class="card">
+<h3>Weekly Timetable</h3>
+<table id="scheduleTable">
+<tr><th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr>
+<tr><td>6-8</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+<tr><td>8-10</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+<tr><td>6-8 PM</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+</table>
+<button class="btn" onclick="saveSchedule()">Save Weekly Schedule</button>
+</div>
+
+<div class="card">
+<h3>Quick Time Block Planner</h3>
+<input id="blockDay" placeholder="Day">
+<input id="blockTime" placeholder="Time">
+<input id="blockTask" placeholder="Task">
+<button class="btn" onclick="addBlock()">Add Block</button>
+<div id="blockList"></div>
+</div>
+</div>
+
 <div id="analytics" class="page">
 <div class="card">
 <h3>Analytics</h3>
 <p>Total Tasks: <span id="totalTasks"></span></p>
 <p>Completed: <span id="completedTasks"></span></p>
 <p>Completion Rate: <span id="completionRate"></span>%</p>
+<p>Time Blocks Planned: <span id="totalBlocks"></span></p>
 </div>
 </div>
 
-<!-- AI -->
 <div id="ai" class="page">
 <div class="card">
 <h3>AI Assistant</h3>
@@ -194,7 +110,6 @@ margin-bottom:10px;
 </div>
 </div>
 
-<!-- PROFILE -->
 <div id="profile" class="page">
 <div class="card">
 <h3>Profile</h3>
@@ -206,27 +121,22 @@ margin-bottom:10px;
 
 <script>
 
-/* INIT USER */
 if(!localStorage.getItem("padiUser")){
 localStorage.setItem("padiUser",JSON.stringify({
 username:"Student",
 tasks:[],
+schedule:[],
+weeklyGrid:[],
 streak:0,
 lastDate:null
 }));
 }
 
-let user = JSON.parse(localStorage.getItem("padiUser"));
+let user=JSON.parse(localStorage.getItem("padiUser"));
 
 welcome.innerText="Welcome "+user.username;
-
-const quotes=[
-"Discipline creates success.",
-"Small progress is powerful.",
-"Consistency beats motivation.",
-"Stay focused."
-];
-quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
+quote.innerText=["Stay focused.","Discipline builds success.","Progress over perfection.","Keep going!"][Math.floor(Math.random()*4)];
+streak.innerText=user.streak;
 
 /* PAGE SWITCH */
 function openPage(id){
@@ -235,31 +145,22 @@ document.getElementById(id).classList.add("active");
 updateAnalytics();
 }
 
-/* TASK */
+/* TASKS */
 function addTask(){
 if(!taskInput.value) return;
-
-user.tasks.push({
-text:taskInput.value,
-deadline:deadlineInput.value||"No deadline",
-done:false
-});
-
+user.tasks.push({text:taskInput.value,deadline:deadlineInput.value||"No deadline",done:false});
 localStorage.setItem("padiUser",JSON.stringify(user));
-taskInput.value="";
-deadlineInput.value="";
+taskInput.value="";deadlineInput.value="";
 loadTasks();
 }
 
 function loadTasks(){
 taskList.innerHTML="";
 let done=0;
-
 user.tasks.forEach((t,i)=>{
 let div=document.createElement("div");
 div.className="task";
 div.innerHTML="<span>"+t.text+" ("+t.deadline+")</span>";
-
 let check=document.createElement("input");
 check.type="checkbox";
 check.checked=t.done;
@@ -268,62 +169,88 @@ user.tasks[i].done=this.checked;
 localStorage.setItem("padiUser",JSON.stringify(user));
 loadTasks();
 };
-
 div.appendChild(check);
 taskList.appendChild(div);
-
 if(t.done) done++;
 });
-
-let percent=user.tasks.length?
-(done/user.tasks.length)*100:0;
+let percent=user.tasks.length?(done/user.tasks.length)*100:0;
 progressBar.style.width=percent+"%";
-
 updateAnalytics();
 }
-
 loadTasks();
+
+/* STREAK */
+function updateStreak(){
+let today=new Date().toDateString();
+if(user.lastDate===today){alert("Already updated today!");return;}
+user.streak++;user.lastDate=today;
+localStorage.setItem("padiUser",JSON.stringify(user));
+streak.innerText=user.streak;
+}
+
+/* SCHEDULE GRID */
+function saveSchedule(){
+let cells=document.querySelectorAll("#scheduleTable td[contenteditable]");
+let data=[];
+cells.forEach(c=>data.push(c.innerText));
+user.weeklyGrid=data;
+localStorage.setItem("padiUser",JSON.stringify(user));
+alert("Schedule saved!");
+}
+
+function loadSchedule(){
+if(user.weeklyGrid.length){
+let cells=document.querySelectorAll("#scheduleTable td[contenteditable]");
+cells.forEach((c,i)=>c.innerText=user.weeklyGrid[i]||"");
+}
+}
+loadSchedule();
+
+/* TIME BLOCKS */
+function addBlock(){
+if(!blockDay.value||!blockTime.value||!blockTask.value) return;
+user.schedule.push({day:blockDay.value,time:blockTime.value,task:blockTask.value});
+localStorage.setItem("padiUser",JSON.stringify(user));
+blockDay.value="";blockTime.value="";blockTask.value="";
+loadBlocks();
+}
+
+function loadBlocks(){
+blockList.innerHTML="";
+user.schedule.forEach(b=>{
+let div=document.createElement("div");
+div.className="task";
+div.innerText=b.day+" | "+b.time+" | "+b.task;
+blockList.appendChild(div);
+});
+updateAnalytics();
+}
+loadBlocks();
 
 /* ANALYTICS */
 function updateAnalytics(){
 totalTasks.innerText=user.tasks.length;
 let completed=user.tasks.filter(t=>t.done).length;
 completedTasks.innerText=completed;
-completionRate.innerText=
-user.tasks.length?
-Math.round((completed/user.tasks.length)*100):0;
+completionRate.innerText=user.tasks.length?Math.round((completed/user.tasks.length)*100):0;
+totalBlocks.innerText=user.schedule.length;
 }
 
-/* STREAK */
-function updateStreak(){
-let today=new Date().toDateString();
-if(user.lastDate===today){
-alert("Already updated today!");
-return;
-}
-user.streak++;
-user.lastDate=today;
-localStorage.setItem("padiUser",JSON.stringify(user));
-streak.innerText=user.streak;
-}
-
-streak.innerText=user.streak;
-
-/* AI SMART */
+/* SMART AI */
 function sendAI(){
 if(!aiInput.value) return;
-
 chatBox.innerHTML+="<div class='user'>"+aiInput.value+"</div>";
-
 let response="Stay consistent.";
 
 if(aiInput.value.toLowerCase().includes("plan")){
-response="You have "+user.tasks.length+" tasks. Start with the nearest deadline.";
+response="You have "+user.tasks.length+" tasks. Start with nearest deadline.";
 }
-
+if(aiInput.value.toLowerCase().includes("schedule")){
+response="You planned "+user.schedule.length+" time blocks this week.";
+}
 if(aiInput.value.toLowerCase().includes("progress")){
 let completed=user.tasks.filter(t=>t.done).length;
-response="You completed "+completed+" tasks. Keep going!";
+response="You completed "+completed+" tasks so far.";
 }
 
 chatBox.innerHTML+="<div class='ai'>"+response+"</div>";
@@ -334,15 +261,13 @@ chatBox.scrollTop=chatBox.scrollHeight;
 /* PROFILE */
 profileInfo.innerHTML=
 "Username: "+user.username+"<br>"+
-"Total Tasks: "+user.tasks.length+"<br>"+
+"Tasks: "+user.tasks.length+"<br>"+
+"Time Blocks: "+user.schedule.length+"<br>"+
 "Streak: "+user.streak+" days";
 
-function logout(){
-alert("For now, logout just resets page.");
-location.reload();
-}
+/* LOGOUT */
+function logout(){location.reload();}
 
 </script>
-
 </body>
 </html>
