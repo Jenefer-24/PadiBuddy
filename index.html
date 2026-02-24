@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PadiBuddy Complete</title>
+<title>PadiBuddy Smart</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#111;color:white;}
 .hidden{display:none;}
-.container{margin-top:100px;text-align:center;}
-input{padding:8px;margin:5px;width:220px;}
+.center{text-align:center;margin-top:100px;}
+input,select{padding:8px;margin:5px;width:220px;}
 button{padding:8px 15px;margin:5px;cursor:pointer;}
 .sidebar{position:fixed;left:0;top:0;width:200px;height:100vh;background:#222;padding-top:20px;}
 .sidebar button{display:block;width:90%;margin:10px auto;}
@@ -25,7 +25,7 @@ th,td{border:1px solid #444;padding:5px;}
 <body>
 
 <!-- LOGIN -->
-<div id="loginPage" class="container">
+<div id="loginPage" class="center">
 <h2>Login</h2>
 <input id="loginUser" placeholder="Username"><br>
 <input id="loginPass" type="password" placeholder="Password"><br>
@@ -34,7 +34,7 @@ th,td{border:1px solid #444;padding:5px;}
 </div>
 
 <!-- REGISTER -->
-<div id="registerPage" class="container hidden">
+<div id="registerPage" class="center hidden">
 <h2>Register</h2>
 <input id="regUser" placeholder="Username"><br>
 <input id="regPass" type="password" placeholder="Password"><br>
@@ -71,13 +71,24 @@ th,td{border:1px solid #444;padding:5px;}
 </div>
 
 <div id="schedulePage" class="page">
+<h3>Auto Timetable Generator</h3>
+<input id="subjectInput" placeholder="Enter subjects (comma separated)">
+<select id="hoursSelect">
+<option value="1">1 hour/day</option>
+<option value="2">2 hours/day</option>
+<option value="3">3 hours/day</option>
+</select>
+<button onclick="generateTimetable()">Generate</button>
+
 <h3>Weekly Schedule</h3>
 <table id="scheduleTable">
-<tr><th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
-<tr><td>6-8</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-<tr><td>8-10</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+<tr><th>Day</th><th>Study Plan</th></tr>
+<tr><td>Mon</td><td id="Mon"></td></tr>
+<tr><td>Tue</td><td id="Tue"></td></tr>
+<tr><td>Wed</td><td id="Wed"></td></tr>
+<tr><td>Thu</td><td id="Thu"></td></tr>
+<tr><td>Fri</td><td id="Fri"></td></tr>
 </table>
-<button onclick="saveSchedule()">Save Schedule</button>
 </div>
 
 <div id="analyticsPage" class="page">
@@ -88,7 +99,7 @@ th,td{border:1px solid #444;padding:5px;}
 </div>
 
 <div id="aiPage" class="page">
-<h3>AI Assistant</h3>
+<h3>Smart AI Assistant</h3>
 <div id="chatArea" class="chatBox"></div>
 <input id="aiInput" placeholder="Ask something">
 <button onclick="sendAI()">Send</button>
@@ -103,188 +114,141 @@ th,td{border:1px solid #444;padding:5px;}
 </div>
 
 <script>
+var currentUser=null;
 
-var currentUser = null;
+/* AUTH */
+function showRegister(){loginPage.classList.add("hidden");registerPage.classList.remove("hidden");}
+function showLogin(){registerPage.classList.add("hidden");loginPage.classList.remove("hidden");}
 
-/* Page Switch */
-function showRegister(){
-document.getElementById("loginPage").classList.add("hidden");
-document.getElementById("registerPage").classList.remove("hidden");
-}
-function showLogin(){
-document.getElementById("registerPage").classList.add("hidden");
-document.getElementById("loginPage").classList.remove("hidden");
-}
-
-/* Register */
 function registerFunc(){
-var username=document.getElementById("regUser").value.trim();
-var password=document.getElementById("regPass").value.trim();
-
-if(username===""||password===""){alert("Fill all fields");return;}
-
-var users=localStorage.getItem("users");
-users=users?JSON.parse(users):{};
-
-if(users[username]){alert("User exists");return;}
-
-users[username]={password:password,tasks:[],streak:0,lastDate:null,schedule:[]};
-
+var u=regUser.value.trim();
+var p=regPass.value.trim();
+if(u===""||p===""){alert("Fill fields");return;}
+var users=JSON.parse(localStorage.getItem("users"))||{};
+if(users[u]){alert("User exists");return;}
+users[u]={password:p,tasks:[],streak:0,lastDate:null,schedule:{}};
 localStorage.setItem("users",JSON.stringify(users));
-alert("Registered successfully");
-showLogin();
+alert("Registered");showLogin();
 }
 
-/* Login */
 function loginFunc(){
-var username=document.getElementById("loginUser").value.trim();
-var password=document.getElementById("loginPass").value.trim();
-
-var users=localStorage.getItem("users");
-if(!users){alert("No users found");return;}
-users=JSON.parse(users);
-
-if(users[username]&&users[username].password===password){
-currentUser=username;
-document.getElementById("loginPage").classList.add("hidden");
-document.getElementById("appPage").classList.remove("hidden");
-loadUserData();
-}else{alert("Invalid credentials");}
+var u=loginUser.value.trim();
+var p=loginPass.value.trim();
+var users=JSON.parse(localStorage.getItem("users"))||{};
+if(users[u]&&users[u].password===p){
+currentUser=u;
+loginPage.classList.add("hidden");
+appPage.classList.remove("hidden");
+loadUser();
+}else alert("Invalid");
 }
 
-/* Load User */
-function loadUserData(){
+/* LOAD */
+function loadUser(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
-
-document.getElementById("welcomeText").innerText="Welcome "+currentUser;
-document.getElementById("streakText").innerText=user.streak;
-document.getElementById("profileInfo").innerHTML=
-"Username: "+currentUser+"<br>Streak: "+user.streak;
-
+welcomeText.innerText="Welcome "+currentUser;
+streakText.innerText=user.streak;
+profileInfo.innerHTML="Username: "+currentUser+"<br>Streak: "+user.streak;
 loadTasks();
 loadAnalytics();
-loadSchedule();
 }
 
-/* Navigation */
+/* NAV */
 function openPage(id){
 var pages=document.getElementsByClassName("page");
-for(var i=0;i<pages.length;i++){pages[i].classList.remove("active");}
+for(var i=0;i<pages.length;i++)pages[i].classList.remove("active");
 document.getElementById(id).classList.add("active");
 }
 
-/* Tasks */
+/* TASKS */
 function addTask(){
-var text=document.getElementById("taskInput").value.trim();
+if(!currentUser)return;
+var text=taskInput.value.trim();
 if(text==="")return;
-
 var users=JSON.parse(localStorage.getItem("users"));
 users[currentUser].tasks.push({text:text,done:false});
 localStorage.setItem("users",JSON.stringify(users));
-document.getElementById("taskInput").value="";
+taskInput.value="";
 loadTasks();
 }
 
 function loadTasks(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
-var list=document.getElementById("taskList");
-list.innerHTML="";
-
-user.tasks.forEach(function(task,index){
+taskList.innerHTML="";
+user.tasks.forEach(function(t,i){
 var div=document.createElement("div");
 div.className="task";
-var span=document.createElement("span");
-span.innerText=task.text;
-
-var checkbox=document.createElement("input");
-checkbox.type="checkbox";
-checkbox.checked=task.done;
-checkbox.onchange=function(){
-user.tasks[index].done=this.checked;
+div.innerHTML="<span>"+t.text+"</span>";
+var cb=document.createElement("input");
+cb.type="checkbox";
+cb.checked=t.done;
+cb.onchange=function(){
+user.tasks[i].done=this.checked;
 localStorage.setItem("users",JSON.stringify(users));
 loadAnalytics();
 };
-
-div.appendChild(span);
-div.appendChild(checkbox);
-list.appendChild(div);
+div.appendChild(cb);
+taskList.appendChild(div);
 });
 }
 
-/* Streak */
+/* STREAK */
 function updateStreak(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
 var today=new Date().toDateString();
-if(user.lastDate===today){alert("Already updated today");return;}
-user.streak++;
-user.lastDate=today;
+if(user.lastDate===today){alert("Already updated");return;}
+user.streak++;user.lastDate=today;
 localStorage.setItem("users",JSON.stringify(users));
-document.getElementById("streakText").innerText=user.streak;
+streakText.innerText=user.streak;
 }
 
-/* Analytics */
+/* ANALYTICS */
 function loadAnalytics(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
 var total=user.tasks.length;
 var completed=user.tasks.filter(t=>t.done).length;
-document.getElementById("totalTasks").innerText=total;
-document.getElementById("completedTasks").innerText=completed;
-document.getElementById("completionRate").innerText=
-total?Math.round((completed/total)*100):0;
+totalTasks.innerText=total;
+completedTasks.innerText=completed;
+completionRate.innerText=total?Math.round((completed/total)*100):0;
 }
 
-/* Schedule */
-function saveSchedule(){
-var users=JSON.parse(localStorage.getItem("users"));
-var user=users[currentUser];
-var cells=document.querySelectorAll("#scheduleTable td[contenteditable]");
-var data=[];
-cells.forEach(function(cell){data.push(cell.innerText);});
-user.schedule=data;
-localStorage.setItem("users",JSON.stringify(users));
-alert("Schedule saved");
-}
-
-function loadSchedule(){
-var users=JSON.parse(localStorage.getItem("users"));
-var user=users[currentUser];
-if(user.schedule && user.schedule.length){
-var cells=document.querySelectorAll("#scheduleTable td[contenteditable]");
-cells.forEach(function(cell,i){
-cell.innerText=user.schedule[i]||"";
-});
+/* AUTO TIMETABLE */
+function generateTimetable(){
+var subjects=subjectInput.value.split(",");
+var hours=parseInt(hoursSelect.value);
+if(subjects.length===0)return;
+var days=["Mon","Tue","Wed","Thu","Fri"];
+for(var i=0;i<days.length;i++){
+var subject=subjects[i%subjects.length].trim();
+document.getElementById(days[i]).innerText=
+subject+" - "+hours+" hour(s)";
 }
 }
 
-/* AI */
+/* SMART AI */
 function sendAI(){
-var input=document.getElementById("aiInput").value.trim();
+var input=aiInput.value.trim();
 if(input==="")return;
-
-var chat=document.getElementById("chatArea");
-chat.innerHTML+="<div class='user'>"+input+"</div>";
-
+chatArea.innerHTML+="<div class='user'>"+input+"</div>";
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
 var response="Stay consistent!";
-
 if(input.toLowerCase().includes("plan"))
 response="You have "+user.tasks.length+" tasks.";
-if(input.toLowerCase().includes("progress"))
-response="You completed "+user.tasks.filter(t=>t.done).length+" tasks.";
-
-chat.innerHTML+="<div class='ai'>"+response+"</div>";
-document.getElementById("aiInput").value="";
-chat.scrollTop=chat.scrollHeight;
+if(input.toLowerCase().includes("timetable"))
+response="Use the schedule generator to balance subjects.";
+chatArea.innerHTML+="<div class='ai'>"+response+"</div>";
+aiInput.value="";
+chatArea.scrollTop=chatArea.scrollHeight;
 }
 
-/* Logout */
+/* LOGOUT */
 function logout(){location.reload();}
-
 </script>
+
 </body>
 </html>
