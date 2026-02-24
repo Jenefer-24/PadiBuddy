@@ -1,252 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PadiBuddy 2.1</title>
+<title>PadiBuddy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{margin:0;font-family:Segoe UI;background:#121212;color:white;}
-.hidden{display:none;}
-.center{display:flex;justify-content:center;align-items:center;height:100vh;}
-.card{background:#1f1f1f;padding:30px;border-radius:10px;width:300px;text-align:center;}
-input{width:100%;padding:8px;margin:8px 0;border:none;border-radius:6px;background:#2a2a2a;color:white;}
-button{padding:8px 15px;border:none;border-radius:6px;background:#4e9eff;color:white;cursor:pointer;}
-.sidebar{width:220px;background:#1e1e1e;height:100vh;padding-top:20px;position:fixed;}
-.sidebar h2{text-align:center;color:#4e9eff;margin-bottom:30px;}
-.sidebar button{display:block;width:90%;margin:10px auto;padding:10px;background:#2a2a2a;color:white;border:none;border-radius:6px;text-align:left;}
-.sidebar button:hover{background:#4e9eff;}
-.main{margin-left:220px;padding:30px;}
-.page{display:none;}
-.active{display:block;}
-.card2{background:#1f1f1f;padding:20px;border-radius:10px;margin-bottom:20px;}
-.task{background:#2a2a2a;padding:10px;border-radius:6px;margin:10px 0;display:flex;justify-content:space-between;}
-.progress{background:#2a2a2a;height:15px;border-radius:10px;}
-.progress-bar{height:100%;background:#4e9eff;width:0%;border-radius:10px;}
-.chat{background:#2a2a2a;height:250px;overflow-y:auto;padding:10px;border-radius:6px;}
-.user{text-align:right;color:#4e9eff;}
-.ai{text-align:left;color:#90ee90;}
-table{width:100%;border-collapse:collapse;text-align:center;}
-th,td{border:1px solid #333;padding:5px;}
-td{cursor:text;}
+body { font-family: Arial; background:#111; color:white; text-align:center; }
+.box { margin-top:100px; }
+input { padding:8px; margin:5px; width:200px; }
+button { padding:8px 15px; margin:5px; }
+.hidden { display:none; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
-<div id="loginPage" class="center">
-<div class="card">
+<!-- LOGIN -->
+<div id="loginBox" class="box">
 <h2>Login</h2>
-<input id="loginUser" placeholder="Username">
-<input type="password" id="loginPass" placeholder="Password">
-<button onclick="login()">Login</button>
-<p>No account? <button onclick="showRegister()">Register</button></p>
-</div>
+<input id="loginUser" placeholder="Username"><br>
+<input id="loginPass" type="password" placeholder="Password"><br>
+<button onclick="login()">Login</button><br>
+<button onclick="showRegister()">Go to Register</button>
 </div>
 
-<!-- REGISTER PAGE -->
-<div id="registerPage" class="center hidden">
-<div class="card">
+<!-- REGISTER -->
+<div id="registerBox" class="box hidden">
 <h2>Register</h2>
-<input id="regUser" placeholder="Username">
-<input type="password" id="regPass" placeholder="Password">
-<button onclick="register()">Register</button>
-<p>Have account? <button onclick="showLogin()">Login</button></p>
-</div>
-</div>
-
-<!-- APP -->
-<div id="app" class="hidden">
-<div class="sidebar">
-<h2>PadiBuddy</h2>
-<button onclick="openPage('dashboard')">Dashboard</button>
-<button onclick="openPage('tasks')">Tasks</button>
-<button onclick="openPage('schedule')">Schedule</button>
-<button onclick="openPage('analytics')">Analytics</button>
-<button onclick="openPage('ai')">AI</button>
-<button onclick="openPage('profile')">Profile</button>
-<button onclick="logout()">Logout</button>
+<input id="regUser" placeholder="Username"><br>
+<input id="regPass" type="password" placeholder="Password"><br>
+<button onclick="register()">Register</button><br>
+<button onclick="showLogin()">Go to Login</button>
 </div>
 
-<div class="main">
-
-<div id="dashboard" class="page active">
-<div class="card2">
+<!-- DASHBOARD -->
+<div id="dashboard" class="box hidden">
 <h2 id="welcome"></h2>
-<p id="quote"></p>
-</div>
-<div class="card2">
-<p>🔥 Streak: <span id="streak">0</span> days</p>
-<button onclick="updateStreak()">Update Streak</button>
-</div>
-</div>
-
-<div id="tasks" class="page">
-<div class="card2">
-<input id="taskInput" placeholder="Task">
-<input type="date" id="deadlineInput">
-<button onclick="addTask()">Add</button>
-<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
-</div>
-<div id="taskList"></div>
-</div>
-
-<div id="schedule" class="page">
-<div class="card2">
-<h3>Weekly Grid</h3>
-<table id="grid">
-<tr><th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
-<tr><td>6-8</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-<tr><td>8-10</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-</table>
-<button onclick="saveGrid()">Save</button>
-</div>
-</div>
-
-<div id="analytics" class="page">
-<div class="card2">
-<p>Total Tasks: <span id="totalTasks"></span></p>
-<p>Completed: <span id="completedTasks"></span></p>
-<p>Completion Rate: <span id="completionRate"></span>%</p>
-</div>
-</div>
-
-<div id="ai" class="page">
-<div class="card2">
-<div id="chatBox" class="chat"></div>
-<input id="aiInput" placeholder="Ask something">
-<button onclick="sendAI()">Send</button>
-</div>
-</div>
-
-<div id="profile" class="page">
-<div class="card2">
-<p id="profileInfo"></p>
-</div>
-</div>
-
-</div>
+<button onclick="logout()">Logout</button>
 </div>
 
 <script>
 
-let currentUser=null;
+function showRegister() {
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("registerBox").classList.remove("hidden");
+}
 
-function showRegister(){loginPage.classList.add("hidden");registerPage.classList.remove("hidden");}
-function showLogin(){registerPage.classList.add("hidden");loginPage.classList.remove("hidden");}
+function showLogin() {
+document.getElementById("registerBox").classList.add("hidden");
+document.getElementById("loginBox").classList.remove("hidden");
+}
 
-function register(){
-if(!regUser.value||!regPass.value){alert("Fill fields");return;}
-let users=JSON.parse(localStorage.getItem("users"))||{};
-users[regUser.value]={password:regPass.value,tasks:[],streak:0,lastDate:null,grid:[]};
-localStorage.setItem("users",JSON.stringify(users));
-alert("Registered!");
+function register() {
+var username = document.getElementById("regUser").value;
+var password = document.getElementById("regPass").value;
+
+if (username === "" || password === "") {
+alert("Please fill both fields");
+return;
+}
+
+var users = localStorage.getItem("users");
+if (users) {
+users = JSON.parse(users);
+} else {
+users = {};
+}
+
+if (users[username]) {
+alert("User already exists");
+return;
+}
+
+users[username] = { password: password };
+
+localStorage.setItem("users", JSON.stringify(users));
+
+alert("Registration successful");
 showLogin();
 }
 
-function login(){
-let users=JSON.parse(localStorage.getItem("users"))||{};
-if(users[loginUser.value]&&users[loginUser.value].password===loginPass.value){
-currentUser=loginUser.value;
-loginPage.classList.add("hidden");
-app.classList.remove("hidden");
-loadUser();
-}else{alert("Wrong credentials");}
+function login() {
+var username = document.getElementById("loginUser").value;
+var password = document.getElementById("loginPass").value;
+
+var users = localStorage.getItem("users");
+if (!users) {
+alert("No users registered");
+return;
 }
 
-function logout(){location.reload();}
+users = JSON.parse(users);
 
-function loadUser(){
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-welcome.innerText="Welcome "+currentUser;
-quote.innerText=["Stay focused.","Keep pushing.","Progress matters."][Math.floor(Math.random()*3)];
-streak.innerText=user.streak;
-loadTasks();
-loadAnalytics();
-profileInfo.innerHTML="Username: "+currentUser+"<br>Streak: "+user.streak;
+if (users[username] && users[username].password === password) {
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+document.getElementById("welcome").innerText = "Welcome " + username;
+} else {
+alert("Invalid login");
+}
 }
 
-function openPage(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-function addTask(){
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-user.tasks.push({text:taskInput.value,deadline:deadlineInput.value,done:false});
-localStorage.setItem("users",JSON.stringify(users));
-taskInput.value="";deadlineInput.value="";
-loadTasks();
-}
-
-function loadTasks(){
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-taskList.innerHTML="";
-let done=0;
-user.tasks.forEach((t,i)=>{
-let div=document.createElement("div");
-div.className="task";
-div.innerHTML="<span>"+t.text+" ("+t.deadline+")</span>";
-let check=document.createElement("input");
-check.type="checkbox";
-check.checked=t.done;
-check.onchange=function(){
-user.tasks[i].done=this.checked;
-localStorage.setItem("users",JSON.stringify(users));
-loadTasks();
-};
-div.appendChild(check);
-taskList.appendChild(div);
-if(t.done) done++;
-});
-let percent=user.tasks.length?(done/user.tasks.length)*100:0;
-progressBar.style.width=percent+"%";
-loadAnalytics();
-}
-
-function updateStreak(){
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-let today=new Date().toDateString();
-if(user.lastDate===today){alert("Already updated");return;}
-user.streak++;user.lastDate=today;
-localStorage.setItem("users",JSON.stringify(users));
-streak.innerText=user.streak;
-}
-
-function loadAnalytics(){
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-totalTasks.innerText=user.tasks.length;
-let completed=user.tasks.filter(t=>t.done).length;
-completedTasks.innerText=completed;
-completionRate.innerText=user.tasks.length?Math.round((completed/user.tasks.length)*100):0;
-}
-
-function saveGrid(){
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-let cells=document.querySelectorAll("#grid td[contenteditable]");
-let data=[];
-cells.forEach(c=>data.push(c.innerText));
-user.grid=data;
-localStorage.setItem("users",JSON.stringify(users));
-alert("Saved!");
-}
-
-function sendAI(){
-if(!aiInput.value)return;
-chatBox.innerHTML+="<div class='user'>"+aiInput.value+"</div>";
-let response="Stay consistent.";
-let users=JSON.parse(localStorage.getItem("users"));
-let user=users[currentUser];
-if(aiInput.value.includes("plan"))response="You have "+user.tasks.length+" tasks.";
-chatBox.innerHTML+="<div class='ai'>"+response+"</div>";
-aiInput.value="";
-chatBox.scrollTop=chatBox.scrollHeight;
+function logout() {
+location.reload();
 }
 
 </script>
+
 </body>
 </html>
