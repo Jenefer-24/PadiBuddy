@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PadiBuddy Smart</title>
+<title>PadiBuddy Final</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#111;color:white;}
@@ -29,7 +29,7 @@ th,td{border:1px solid #444;padding:5px;}
 <h2>Login</h2>
 <input id="loginUser" placeholder="Username"><br>
 <input id="loginPass" type="password" placeholder="Password"><br>
-<button onclick="loginFunc()">Login</button><br>
+<button onclick="login()">Login</button><br>
 <button onclick="showRegister()">Go to Register</button>
 </div>
 
@@ -38,51 +38,49 @@ th,td{border:1px solid #444;padding:5px;}
 <h2>Register</h2>
 <input id="regUser" placeholder="Username"><br>
 <input id="regPass" type="password" placeholder="Password"><br>
-<button onclick="registerFunc()">Register</button><br>
+<button onclick="register()">Register</button><br>
 <button onclick="showLogin()">Go to Login</button>
 </div>
 
 <!-- APP -->
-<div id="appPage" class="hidden">
+<div id="app" class="hidden">
 
 <div class="sidebar">
-<button onclick="openPage('dashboardPage')">Dashboard</button>
-<button onclick="openPage('tasksPage')">Tasks</button>
-<button onclick="openPage('schedulePage')">Schedule</button>
-<button onclick="openPage('analyticsPage')">Analytics</button>
-<button onclick="openPage('aiPage')">AI</button>
-<button onclick="openPage('profilePage')">Profile</button>
+<button onclick="openPage('dashboard')">Dashboard</button>
+<button onclick="openPage('tasks')">Tasks</button>
+<button onclick="openPage('schedule')">Schedule</button>
+<button onclick="openPage('analytics')">Analytics</button>
+<button onclick="openPage('ai')">AI</button>
+<button onclick="openPage('profile')">Profile</button>
 <button onclick="logout()">Logout</button>
 </div>
 
 <div class="main">
 
-<div id="dashboardPage" class="page active">
-<h2 id="welcomeText"></h2>
-<p>🔥 Streak: <span id="streakText">0</span></p>
+<div id="dashboard" class="page active">
+<h2 id="welcome"></h2>
+<p>🔥 Streak: <span id="streak">0</span></p>
 <button onclick="updateStreak()">Update Streak</button>
 </div>
 
-<div id="tasksPage" class="page">
-<h3>Add Task</h3>
+<div id="tasks" class="page">
 <input id="taskInput" placeholder="Task">
 <button onclick="addTask()">Add</button>
 <div id="taskList"></div>
 </div>
 
-<div id="schedulePage" class="page">
-<h3>Auto Timetable Generator</h3>
-<input id="subjectInput" placeholder="Enter subjects (comma separated)">
-<select id="hoursSelect">
-<option value="1">1 hour/day</option>
-<option value="2">2 hours/day</option>
-<option value="3">3 hours/day</option>
+<div id="schedule" class="page">
+<h3>Auto Timetable</h3>
+<input id="subjects" placeholder="Math, Science, English">
+<select id="hours">
+<option value="1">1 hr</option>
+<option value="2">2 hr</option>
+<option value="3">3 hr</option>
 </select>
-<button onclick="generateTimetable()">Generate</button>
+<button onclick="generateSchedule()">Generate</button>
 
-<h3>Weekly Schedule</h3>
-<table id="scheduleTable">
-<tr><th>Day</th><th>Study Plan</th></tr>
+<table>
+<tr><th>Day</th><th>Plan</th></tr>
 <tr><td>Mon</td><td id="Mon"></td></tr>
 <tr><td>Tue</td><td id="Tue"></td></tr>
 <tr><td>Wed</td><td id="Wed"></td></tr>
@@ -91,23 +89,20 @@ th,td{border:1px solid #444;padding:5px;}
 </table>
 </div>
 
-<div id="analyticsPage" class="page">
-<h3>Analytics</h3>
-<p>Total Tasks: <span id="totalTasks"></span></p>
-<p>Completed Tasks: <span id="completedTasks"></span></p>
-<p>Completion Rate: <span id="completionRate"></span>%</p>
+<div id="analytics" class="page">
+<p>Total Tasks: <span id="total"></span></p>
+<p>Completed: <span id="done"></span></p>
+<p>Completion: <span id="percent"></span>%</p>
 </div>
 
-<div id="aiPage" class="page">
-<h3>Smart AI Assistant</h3>
-<div id="chatArea" class="chatBox"></div>
-<input id="aiInput" placeholder="Ask something">
-<button onclick="sendAI()">Send</button>
+<div id="ai" class="page">
+<div id="chat" class="chatBox"></div>
+<input id="aiInput" placeholder="Ask">
+<button onclick="askAI()">Send</button>
 </div>
 
-<div id="profilePage" class="page">
-<h3>Profile</h3>
-<p id="profileInfo"></p>
+<div id="profile" class="page">
+<p id="profileText"></p>
 </div>
 
 </div>
@@ -116,29 +111,32 @@ th,td{border:1px solid #444;padding:5px;}
 <script>
 var currentUser=null;
 
-/* AUTH */
+/* NAV */
 function showRegister(){loginPage.classList.add("hidden");registerPage.classList.remove("hidden");}
 function showLogin(){registerPage.classList.add("hidden");loginPage.classList.remove("hidden");}
 
-function registerFunc(){
+/* REGISTER */
+function register(){
 var u=regUser.value.trim();
 var p=regPass.value.trim();
-if(u===""||p===""){alert("Fill fields");return;}
+if(!u||!p){alert("Fill fields");return;}
 var users=JSON.parse(localStorage.getItem("users"))||{};
 if(users[u]){alert("User exists");return;}
-users[u]={password:p,tasks:[],streak:0,lastDate:null,schedule:{}};
+users[u]={password:p,tasks:[],streak:0,lastDate:null};
 localStorage.setItem("users",JSON.stringify(users));
-alert("Registered");showLogin();
+alert("Registered!");
+showLogin();
 }
 
-function loginFunc(){
+/* LOGIN */
+function login(){
 var u=loginUser.value.trim();
 var p=loginPass.value.trim();
 var users=JSON.parse(localStorage.getItem("users"))||{};
 if(users[u]&&users[u].password===p){
 currentUser=u;
 loginPage.classList.add("hidden");
-appPage.classList.remove("hidden");
+app.classList.remove("hidden");
 loadUser();
 }else alert("Invalid");
 }
@@ -147,25 +145,23 @@ loadUser();
 function loadUser(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
-welcomeText.innerText="Welcome "+currentUser;
-streakText.innerText=user.streak;
-profileInfo.innerHTML="Username: "+currentUser+"<br>Streak: "+user.streak;
+welcome.innerText="Welcome "+currentUser;
+streak.innerText=user.streak;
+profileText.innerHTML="Username: "+currentUser+"<br>Streak: "+user.streak;
 loadTasks();
-loadAnalytics();
+updateAnalytics();
 }
 
-/* NAV */
+/* PAGE */
 function openPage(id){
-var pages=document.getElementsByClassName("page");
-for(var i=0;i<pages.length;i++)pages[i].classList.remove("active");
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-/* TASKS */
+/* TASK */
 function addTask(){
-if(!currentUser)return;
 var text=taskInput.value.trim();
-if(text==="")return;
+if(!text)return;
 var users=JSON.parse(localStorage.getItem("users"));
 users[currentUser].tasks.push({text:text,done:false});
 localStorage.setItem("users",JSON.stringify(users));
@@ -177,20 +173,20 @@ function loadTasks(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
 taskList.innerHTML="";
-user.tasks.forEach(function(t,i){
-var div=document.createElement("div");
-div.className="task";
-div.innerHTML="<span>"+t.text+"</span>";
-var cb=document.createElement("input");
-cb.type="checkbox";
-cb.checked=t.done;
-cb.onchange=function(){
+user.tasks.forEach((t,i)=>{
+var d=document.createElement("div");
+d.className="task";
+d.innerHTML="<span>"+t.text+"</span>";
+var c=document.createElement("input");
+c.type="checkbox";
+c.checked=t.done;
+c.onchange=function(){
 user.tasks[i].done=this.checked;
 localStorage.setItem("users",JSON.stringify(users));
-loadAnalytics();
+updateAnalytics();
 };
-div.appendChild(cb);
-taskList.appendChild(div);
+d.appendChild(c);
+taskList.appendChild(d);
 });
 }
 
@@ -200,50 +196,47 @@ var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
 var today=new Date().toDateString();
 if(user.lastDate===today){alert("Already updated");return;}
-user.streak++;user.lastDate=today;
+user.streak++;
+user.lastDate=today;
 localStorage.setItem("users",JSON.stringify(users));
-streakText.innerText=user.streak;
+streak.innerText=user.streak;
 }
 
 /* ANALYTICS */
-function loadAnalytics(){
+function updateAnalytics(){
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
-var total=user.tasks.length;
-var completed=user.tasks.filter(t=>t.done).length;
-totalTasks.innerText=total;
-completedTasks.innerText=completed;
-completionRate.innerText=total?Math.round((completed/total)*100):0;
+var totalTasks=user.tasks.length;
+var doneTasks=user.tasks.filter(t=>t.done).length;
+total.innerText=totalTasks;
+done.innerText=doneTasks;
+percent.innerText=totalTasks?Math.round((doneTasks/totalTasks)*100):0;
 }
 
-/* AUTO TIMETABLE */
-function generateTimetable(){
-var subjects=subjectInput.value.split(",");
-var hours=parseInt(hoursSelect.value);
-if(subjects.length===0)return;
+/* TIMETABLE */
+function generateSchedule(){
+var subs=subjects.value.split(",");
+var h=hours.value;
 var days=["Mon","Tue","Wed","Thu","Fri"];
 for(var i=0;i<days.length;i++){
-var subject=subjects[i%subjects.length].trim();
-document.getElementById(days[i]).innerText=
-subject+" - "+hours+" hour(s)";
+var s=subs[i%subs.length].trim();
+document.getElementById(days[i]).innerText=s+" - "+h+" hr";
 }
 }
 
-/* SMART AI */
-function sendAI(){
-var input=aiInput.value.trim();
-if(input==="")return;
-chatArea.innerHTML+="<div class='user'>"+input+"</div>";
+/* AI */
+function askAI(){
+var q=aiInput.value.trim();
+if(!q)return;
+chat.innerHTML+="<div class='user'>"+q+"</div>";
 var users=JSON.parse(localStorage.getItem("users"));
 var user=users[currentUser];
-var response="Stay consistent!";
-if(input.toLowerCase().includes("plan"))
-response="You have "+user.tasks.length+" tasks.";
-if(input.toLowerCase().includes("timetable"))
-response="Use the schedule generator to balance subjects.";
-chatArea.innerHTML+="<div class='ai'>"+response+"</div>";
+var res="Keep going!";
+if(q.includes("plan"))res="You have "+user.tasks.length+" tasks.";
+if(q.includes("study"))res="Focus 45 mins + break.";
+chat.innerHTML+="<div class='ai'>"+res+"</div>";
 aiInput.value="";
-chatArea.scrollTop=chatArea.scrollHeight;
+chat.scrollTop=chat.scrollHeight;
 }
 
 /* LOGOUT */
